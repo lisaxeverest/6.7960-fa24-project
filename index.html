@@ -255,13 +255,31 @@
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-					<h1>Related work</h1>
-				  It is well known that Y does Y. And this has raised the question does X do Y? Because if Y does Y then it stands to reason that X does Y.
-          But we cannot answer this until we realize the Z implies Y and X can be linked to Z.<br><br>
+				<h1>Related work</h1>
+				The most traditional method to personalized treatment is Regress and Compare in which a regression is trained on each set of training data by their treatment. 
+				A given observation is then evaluated on models trained from all treatment options and the treatment that optimizes its outcome is selected. 
+				<br><br> 
+				
+				Recent literature in personalized decision-making has primarily leveraged tree-based machine learning methods and causal methods to improve on regress and compare. 
+				<a href="#ref_1">[1]</a> extends from Regress and Compare and proposes a single-task method that recursively partitions the input space with the smallest sum of impurities.
+				<a href="#ref_2">[2]</a> extends the Optimal Classification Trees in <a href="#ref_3">[3]</a> - an interpreatble tree-based method - to prescription. 
+				They introduce Optimal Prescriptive Trees which estimates the counterfactual outcome of each observation under each treatment during training 
+				to minimize both the prediction and the prescription error. 
+				Relately, <a href="#ref_4">[4]</a>
+
+				<br><br> 
+				More recently, there has been emerging literature on combining prescription and neural networks. <a href="#ref_5">[5]</a> proposes a prescriptive neural network model 
+				using ReLU as the activation function. 
+				In particular, they partition the sample space into disjoint polyhedra and assign a treament to all data points that belong in each partition. 
+				<a href="#ref_6">[6]</a> formulates and solves an optimization problem using predictions obtained through a neural network in the objective function. 
+				They also restrict to ReLU as the activation function to allow modelling as a network flow problem. 
+				<br><br> 
+				We contribute to this strand of literature by relaxing the restriction to ReLU and allowing any type of activation functions in the neural network. 
+				Moreover, we solve the prescription problem that optimizes the objective simultaneously as training the neural network.
+
 
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
-          Interestingly, Plato also asked if X does Y, in <a href="#ref_1">[1]</a>.
 		    </div>
 		</div><div class="content-margin-container" id="Methodology">
 			<div class="margin-left-block">
@@ -296,7 +314,6 @@
 	  rendering equations on webpages.
 		</div>
 		<div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
-	  Interestingly, Plato also asked if X does Y, in <a href="#ref_1">[1]</a>.
 		</div>
 	</div>
 
@@ -354,8 +371,36 @@
 		    <div class="main-content-block">
 						<div class='citation' id="references" style="height:auto"><br>
 							<span style="font-size:16px">References:</span><br><br>
-							<a id="ref_1"></a>[1] <a href="https://en.wikipedia.org/wiki/Allegory_of_the_cave">Allegory of the Cave</a>, Plato, c. 375 BC<br><br>
-							<a id="ref_2"></a>[2] <a href="">A Human-Level AGI</a>, OpenAI, 2025<br><br>
+							<a id="ref_1"></a>[1]
+								Kallus, Nathan. 
+								<cite>Recursive Partitioning for Personalization Using Observational Data.</cite> 
+								<i>International Conference on Machine Learning</i>, PMLR, 2017.
+							<br><br>
+							<a id="ref_2"></a>[2]
+								Bertsimas, Dimitris, Jack Dunn, and Nishanth Mundru. 
+    							<cite>Optimal Prescriptive Trees.</cite> 
+    							<i>INFORMS Journal on Optimization</i>, vol. 1, no. 2, 2019, pp. 164–183.
+							<br><br>
+							<a id="ref_3"></a>[3]
+								Bertsimas, Dimitris, and Jack Dunn. 
+								<cite> Optimal classification trees.</cite>
+								<i>Machine Learning</i>, vol. 106, 2017, pp. 1039–1082.
+							<br><br>
+							<a id="ref_4"></a>[4]
+								Amram, Maxime, Jack Dunn, and Ying Daisy Zhuo. 
+								<cite>Optimal Policy Trees.</cite> 
+								<i>Machine Learning</i>, vol. 111, no. 7, 2022, pp. 2741–2768.
+							<br><br>
+							<a id="ref_5"></a>[5]
+								Sun, Wei, and Asterios Tsiourvas. 
+								<cite>Learning Prescriptive ReLU Networks.</cite> 
+								<i>International Conference on Machine Learning</i>, PMLR, 2023.
+							<br><br>
+							<a id="ref_6"></a>[6]
+								Bergman, David, et al. 
+								<cite>JANOS: An Integrated Predictive and Prescriptive Modeling Framework.</cite> 
+								<i>INFORMS Journal on Computing</i>, vol. 34, no. 2, 2022, pp. 807–816.
+							<br><br>
 						</div>
 		    </div>
 		    <div class="margin-right-block">
