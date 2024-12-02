@@ -182,6 +182,11 @@
 	}
 
 </style>
+	
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 
 	  <title>Prescriptive neural networks for liver trauma patients</title>
       <meta property="og:title" content="Prescriptive neural networks for liver trauma patients" />
@@ -333,93 +338,94 @@
 				<h3>Counterfactual estimation</h3>
 				Before training the prescriptive neural networks, we must first perform a counterfactual estimation process. 
 				Because the prescriptive problem's dataset only contains historical observational data, the counterfactuals are unknown, 
-				e.g. the hypothetical outcomes $y(\boldsymbol{x}_i, t)$ for $t \neq t_{i}$. Thus, before model training, 
-				we perform a counterfactual estimation step inspired by \cite{doubly-robust-policy}, which estimates the outcomes 
-				for each observation under every treatment. We aim to produce $\Gamma$, a rewards matrix where each $\Gamma_{i,t}$ is 
-				the estimated outcome of applying treatment $t$ to the $i^{\text{th}}$ observation. The estimation process is slightly 
-				different for discrete and continuous treatments, both of which we review in the following sections.
+				e.g., the hypothetical outcomes \( y(\boldsymbol{x}_i, t) \) for \( t \neq t_{i} \). Thus, before model training, 
+				we perform a counterfactual estimation step inspired by <a href="#ref-doubly-robust-policy">Dudik et al. (2014)</a>, 
+				which estimates the outcomes for each observation under every treatment. <br><br>
 
-				We now review the three main methods for counterfactual estimation:
+				We aim to produce \( \Gamma \), a rewards matrix where each \( \Gamma_{i,t} \) is the estimated outcome of 
+				applying treatment \( t \) to the \( i^{\text{th}} \) observation. We now review the three main methods for counterfactual estimation:
 				<ol>
 					<li>
-						<b>Direct method.</b> This method directly learns the outcome function $y_{t}(\boldsymbol{x})$ 
-						by training separate models, one for each treatment $t$. During training, each model uses 
-						only the subset of the observations that received treatment $t$. These models can be 
-						random forests or boosting methods and output an estimated outcome $\hat{y_{t}}(\boldsymbol{x})$ 
-						for when treatment $t$ is hypothetically applied to observation $\boldsymbol{x}$. 
-
+						<b>Direct method.</b> T This method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
+						 by training separate models, one for each treatment \( t \). During training, each model uses 
+						 only the subset of the observations that received treatment \( t \). 
+						These models can be random forests or boosting methods and output an estimated outcome \( \hat{y_{t}}(\boldsymbol{x}) \) 
+						for when treatment \( t \) is hypothetically applied to observation \( \boldsymbol{x} \).
 					</li>
 					<li>
-						<b>Propensity score estimation.</b> This method is used to calculate the probability $p_{i,t}$ that 
-						treatment $t$ is assigned to observation $i$. The observational data $\boldsymbol{x}_{i}$ is used to 
-						train a classification model that predicts treatment assignments for each observation. Then, using 
-						this model, the probability that each observation receives its prescribed treatment is calculated. 
+						<b>Propensity score estimation.</b>  This method is used to calculate the probability \( p_{i,t} \) 
+						that treatment \( t \) is assigned to observation \( i \). 
+						The observational data \( \boldsymbol{x}_{i} \) is used to train a 
+						classification model that predicts treatment assignments for each observation. 
+						Then, using this model, the probability that each observation receives its prescribed treatment is calculated. 
 						Here, random forests or boosting methods are also employed.
 					</li>
 					<li><b>Doubly robust estimation.</b> 
-						\item \textbf{} Because direct estimation is often prone to treatment assignment bias, the 
-						doubly-robust estimator attempts to mitigate this bias by re-weight the estimated direct 
-						outcomes with propensity score probabilities (the probability $p_{i,t}$ that treatment $t$ 
-						is assigned to observation $i$). This reweighting is expressed in Equation \eqref{eq:doubly-robust}, 
-						which calculates the doubly-robust reward matrix $\Gamma$:
-						\begin{equation}\label{eq:doubly-robust}
-							\Gamma_{i,t} = \hat{y}_{i,t} + \mathbb{1}\{T_{k}=t\} \frac{1}{p_{i,t}} (y_i-\hat{y}_{i,t}).
-						\end{equation}
+						Because direct estimation is often prone to treatment assignment bias, the doubly-robust 
+						estimator attempts to mitigate this bias by re-weighting the estimated direct outcomes with 
+						propensity score probabilities (the probability \( p_{i,t} \) that treatment \( t \) is assigned to 
+						observation \( i \)). 
+						This reweighting is expressed in Equation below, which calculates the 
+						doubly-robust reward matrix \( \Gamma \):
+						<p style="text-align: center;">
+							\( \Gamma_{i,t} = \hat{y_{t}}(\boldsymbol{x}) + \frac{\mathbb{1}\{t = t_{i}\}}{p_{i,t}} \big(y_{i} - \hat{y_{t}}(\boldsymbol{x})\big). \)
+						</p>
 					</li>
 				</ol>
 
 				<h3>Prescription policy learning through feedforward neural networks</h3>
 
-				A feedforward neural network consists of layers of interconnected neurons, which are computational units 
-				that are each characterized by weights $\{a_{i}\}_{i=1}^p$, a bias $b$, and a nonlinear activation function $h$. 
-				Given an input vector $\boldsymbol{x}\in\mathbb{R}^p$, the neuron calculates $y = \sum_{i=1}^{p}a_{i}x_{i} + b$, a 
-				weighted sum of the input's components, and passes the result $y$ through $h$ to produce the neuron's output $o=h(y)$ 
-				that serves as the input to the subsequent neuron. As observational inputs $\boldsymbol{x}_i$ pass through this network 
-				of interconnected neurons, this calculation is performed in a nested manner and the output of the final layer is computed, 
-				from which a prespecified loss function is evaluated. Using backpropagation, the weights of the network are updated in order 
-				to minimize this loss function. The typical structure is presented in Figure \ref{fig:fnn}. <br><br>
-
-				\begin{figure}[!ht]
-				\centering
-					\caption{Architecture of a feedforward neural network (\cite{fnn-image}).}\label{fig:fnn}
-				\includegraphics[width=0.6\textwidth]{images/nn.png}
-				\end{figure}<br><br>
-
-				Without loss of generality, we assume our goal is to minimize outcomes in the prescriptive problem. 
-				The objective of our prescriptive neural network is to minimize total rewards for the prescriptions 
-				$\tau(\boldsymbol{x}_i)$ assigned to each datapoint $\boldsymbol{x}_i$ by the network: 
-				\begin{equation}\label{eq:nn_obj_func}
-					\min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{N_t}\mathbb{1} \{\tau(\boldsymbol{x}_i) = t\}\cdot \Gamma_{i,t}.
-				\end{equation}<br><br>
-
-				Because we use  for training the PNN, Because the indicator function  is not differentiable, 
-				the backpropogation algorithm cannot exactly handle Equation \ref{eq:nn_obj_func}. We therefore ``soften'' 
-				the objective and leverage an approach analogous to that of multi-classification networks. The PNN assigns 
-				treatments probabilistically, such that its output layer consists of $N_t$ neurons, one for each distinct 
-				treatment (as multi-classification networks have an output corresponding to each target class). We denote 
-				the output vector of the PNN as $\boldsymbol{z}\in\mathbb{R}^{N_t}$ and apply a softmax activation function 
-				to these output neurons to obtain a probability distribution over the distinct treatments, such that 
-				$\mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z})$, where $\sigma(\cdot)$ denotes the 
-				softmax function and is defined explicitly below:  
-				\begin{equation}
-					\sigma_t(\boldsymbol{z})= \frac{\exp{z_{t}}}{\sum_{j=1}^{T} \exp{z_{j}}} \text{ for $t=1,\ldots ,T$ and $\boldsymbol{z} \in \mathbb{R}^T$}.
-				\label{eq:softmax}
-				\end{equation}<br><br>
-
-				We obtain the final prescription of the network by finding the treatment $t$ with the highest 
-				probability $\mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z})$. This approach is 
-				analogous to a classification network, where the predicted class is the one with the highest probability 
-				among the network's output nodes. The tractable objective for our PNN models is therefore:
-				\begin{equation}
-					\min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{T} \mathbb{P}[\tau(\boldsymbol{x}_i) = t] \cdot \Gamma_{i,t}.
-				\label{eq:prob_loss_func}
-				\end{equation}
-
-
-
-				
+				<p>
+					A feedforward neural network consists of layers of interconnected neurons, which are computational units that are 
+					each characterized by weights 
+					\( \{a_{i}\}_{i=1}^p \), a bias \( b \), and a nonlinear activation function \( h \). Given an input vector 
+					\( \boldsymbol{x} \in \mathbb{R}^p \), the neuron calculates 
+					\( y = \sum_{i=1}^{p}a_{i}x_{i} + b \), a weighted sum of the input's components, and passes the result \( y \) through 
+					\( h \) to produce the neuron's output \( o = h(y) \) that serves as the input to the subsequent neuron. 
+					As observational inputs \( \boldsymbol{x}_i \) pass through this network of interconnected neurons, this calculation is 
+					performed in a nested manner, and the output of the final layer is computed, from which a prespecified loss function is 
+					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
+					structure is presented in Figure 1.
+				</p>
+				<figure>
+					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
+					<figcaption>Architecture of a feedforward neural network (adapted from [fnn-image]).</figcaption>
+				</figure>
+				<p>
+					Without loss of generality, we assume our goal is to minimize outcomes in the prescriptive problem. The objective of our 
+					prescriptive neural network is to minimize total rewards for the prescriptions \( \tau(\boldsymbol{x}_i) \) assigned to each 
+					datapoint \( \boldsymbol{x}_i \) by the network:
+				</p>
+				<p style="text-align: center;">
+					\( \min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{N_t} \mathbb{1} \{\tau(\boldsymbol{x}_i) = t\} \cdot \Gamma_{i,t}. \)
+				</p>
+				<p>
+					Because the indicator function is not differentiable, the backpropagation algorithm cannot exactly handle this objective. 
+					We therefore "soften" the objective and leverage an approach analogous to that of multi-classification networks. The PNN assigns 
+					treatments probabilistically, such that its output layer consists of \( N_t \) neurons, one for each distinct treatment 
+					(as multi-classification networks have an output corresponding to each target class). We denote the output vector of the PNN as 
+					\( \boldsymbol{z} \in \mathbb{R}^{N_t} \) and apply a softmax activation function to these output neurons to obtain a probability 
+					distribution over the distinct treatments, such that \( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \), 
+					where \( \sigma(\cdot) \) denotes the softmax function and is defined explicitly below:
+				</p>
+				<p style="text-align: center;">
+					\( \sigma_t(\boldsymbol{z}) = \frac{\exp{z_{t}}}{\sum_{j=1}^{T} \exp{z_{j}}} \text{ for } t=1,\ldots,T \text{ and } \boldsymbol{z} 
+					\in \mathbb{R}^T. \)
+				</p>
+				<p>
+					We obtain the final prescription of the network by finding the treatment \( t \) with the highest probability 
+					\( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \). This approach is analogous to a classification network, 
+					where the predicted class is the one with the highest probability among the network's output nodes. The tractable objective for 
+					our PNN models is therefore:
+				</p>
+				<p style="text-align: center;">
+					\( \min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{T} \mathbb{P}[\tau(\boldsymbol{x}_i) = t] \cdot \Gamma_{i,t}. \)
+				</p>
+			</body>
+		
 	  <!-- 	  
 	  <center>
+		
 		<math xmlns="http://www.w3.org/1998/Math/MathML">
 		  <mrow>
 			<mrow>
