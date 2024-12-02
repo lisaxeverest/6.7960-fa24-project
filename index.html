@@ -258,23 +258,28 @@
 				<h1>Related work</h1>
 				The most traditional method to personalized treatment is Regress and Compare in which a regression is trained on each set of training data by their treatment. 
 				A given observation is then evaluated on models trained from all treatment options and the treatment that optimizes its outcome is selected. 
+				However, the possible lack of data for each separate model and the lack of interpretability and may reduce the performance and applicability of this method. 
 				<br><br> 
 				
-				Recent literature in personalized decision-making has primarily leveraged tree-based machine learning methods and causal methods to improve on regress and compare. 
+				Recent literature in personalized decision-making has primarily leveraged tree-based machine learning methods and causal methods to improve upon regress and compare. 
 				<a href="#ref_1">[1]</a> extends from Regress and Compare and proposes a single-task method that recursively partitions the input space with the smallest sum of impurities.
 				<a href="#ref_2">[2]</a> extends the Optimal Classification Trees in <a href="#ref_3">[3]</a> - an interpreatble tree-based method - to prescription. 
 				They introduce Optimal Prescriptive Trees which estimates the counterfactual outcome of each observation under each treatment during training 
 				to minimize both the prediction and the prescription error. 
-				Relately, <a href="#ref_4">[4]</a>
+				<a href="#ref_4">[4]</a> further develops Optimal Policy Tree in which counterfactuals are estimated separately prior to the tree training. 
+				A decision tree is then trained to obtain the optimal policy.
 
 				<br><br> 
-				More recently, there has been emerging literature on combining prescription and neural networks. <a href="#ref_5">[5]</a> proposes a prescriptive neural network model 
-				using ReLU as the activation function. 
+				More recently, there has been emerging literature on combining prescription and neural networks. 
+				<a href="#ref_5">[5]</a> proposes a prescriptive neural network model using ReLU as the activation function. 
 				In particular, they partition the sample space into disjoint polyhedra and assign a treament to all data points that belong in each partition. 
+				They further show that every such trained network can be transformed to a prescriptive tree with hyperplane splits. 
 				<a href="#ref_6">[6]</a> formulates and solves an optimization problem using predictions obtained through a neural network in the objective function. 
 				They also restrict to ReLU as the activation function to allow modelling as a network flow problem. 
+				Relatedly, <a href="#ref_7">[7]</a> formulates binary activation functions and loss function of neural networks
+				using mixed-integer programming, then combines with counterfactual estimation to obtain optimal treatments. 
 				<br><br> 
-				We contribute to this strand of literature by relaxing the restriction to ReLU and allowing any type of activation functions in the neural network. 
+				We contribute to this strand of literature by relaxing the restriction to ReLU or binary activations and allowing any type of activation functions in the neural network. 
 				Moreover, we solve the prescription problem that optimizes the objective simultaneously as training the neural network.
 
 
@@ -400,6 +405,11 @@
 								Bergman, David, et al. 
 								<cite>JANOS: An Integrated Predictive and Prescriptive Modeling Framework.</cite> 
 								<i>INFORMS Journal on Computing</i>, vol. 34, no. 2, 2022, pp. 807–816.
+							<br><br>
+							<a id = "ref_7"></a>[7]
+								Patil, Vrishabh, Kara Hoppe, and Yonatan Mintz. 
+								<cite>Applications of 0-1 Neural Networks in Prescription and Prediction.</cite> 
+								<i>arXiv preprint</i>, arXiv:2402.18851, 2024.
 							<br><br>
 						</div>
 		    </div>
