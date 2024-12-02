@@ -285,11 +285,50 @@
 			<div class="margin-left-block">
 			</div>
 		<div class="main-content-block">
-				<h1>Methodology</h1>
-			  It is well known that Y does Y. And this has raised the question does X do Y? Because if Y does Y then it stands to reason that X does Y.
-	  But we cannot answer this until we realize the Z implies Y and X can be linked to Z.<br><br>
+				<h2>Methodology</h2>
+				We divide the training process into four main steps: embedding extraction, counterfactual estimation, and 
+				prescription policy learning (model training). <br><br>
+				<h3>Embedding extraction</h3>
+				The first step in the model pipeline is to extract embeddings from the structured and unstructured data. <br>
+				<h4>Structured data</h4> 
+				We extract embeddings from structured feature data through traditional preprocessing techniques as 
+				described below, where the technique depends on whether the feature is numerical, categorical, or ordinal.
+				<ol>
+					<li>
+						<b>Numerical features.</b> We normalize numerical features to the interval [0,1] for the 
+						counterfactual estimation and model training steps. This increases stability and helps to weight features equally!
+					</li>
+					<li>
+						<b>Categorical features.</b> For categorical features, we use one-hot encodings to convert them to 
+						binary features, such that each category becomes a new indicator feature.
+					</li>
+					<li><b>
+						Ordinal features</b> Ordinal features are categorical features whose values carry numerical information. 
+						Since these categories have a natural order to them, we can assign each category a number such as 1 to 5, 
+						where relative magnitude holds information. For example, 
+						a feature, "Age Groups", may take on the following values: "0-18", "19-24", "25-49", "50-74", "75-100"; we 
+						can assign these to numbers 1 - 5, such that "0-18" is assigned 1, and so on. That way, an individual with an age of 
+						"1" in the preprocessed data indicates that they are younger relative to an individual with an age of "3". 
+						We then treat these ordinal features 
+						as numerical features in our experiments.
+					</li>
+				</ol>
+				<h4>Unstructured data</h4>
+				We extract embeddings from unstructured data using pretrained, deep learning models. By passing each observation's 
+				unstructured data through these pretrained models, we can obtain a vector representation of the unstructured datapoint. 
+				In particular, our experiments on medical data in Section \ref{sec:realworld-datasets} use Clinical Longformer, 
+				a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
+				(https://arxiv.org/pdf/2201.11838); from this model, we obtain a 768-dimensional embedding vector for each observation's text data. <br><br>
 
-	  Now let's write some math!<br>
+				We then leverage Principle Component Analysis (PCA) for dimensionality reduction purposes. Though optional, this step helps to 
+				improve stability, tractability, and performance in our PNN model, since deep learning models can have large, high-dimensional 
+				embeddings. In particular, we reduce to a 32-dimensional representation for the clinical notes in our experiments on medical data. <br><br>
+
+				While we specifically use ClinicalLongformer, any pretrained large language model (LLM) may be used to process unstructured text 
+				data. Additionally, any pretrained computer vision (CV) model may be used to process unstructured image data. This results in 
+				an embedding extraction step for unstructured data that is not only highly accessible, but also highly flexible. <br><br>
+				
+	  <!-- 	  
 	  <center>
 		<math xmlns="http://www.w3.org/1998/Math/MathML">
 		  <mrow>
@@ -306,12 +345,9 @@
 		  <mo>=</mo>
 		  <mi>x</mi>
 		</math>
-	  </center>
+	  </center> -->
 	  <br>
-	  It's probably best to ask an LLM to help do the web
-	  formatting for math. You can tell it "convert this latex equation into MathML: $$\frac{\partial dy}{\partial dx} = x$$"
-	  But it took me a few tries. So, if you get frustrated, you can embed an image of the equation, or use other packages for
-	  rendering equations on webpages.
+	  
 		</div>
 		<div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
 		</div>
