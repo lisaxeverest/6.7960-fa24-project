@@ -182,6 +182,11 @@
 	}
 
 </style>
+	
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 
 	  <title>Prescriptive neural networks for liver trauma patients</title>
       <meta property="og:title" content="Prescriptive neural networks for liver trauma patients" />
@@ -290,12 +295,142 @@
 			<div class="margin-left-block">
 			</div>
 		<div class="main-content-block">
-				<h1>Methodology</h1>
-			  It is well known that Y does Y. And this has raised the question does X do Y? Because if Y does Y then it stands to reason that X does Y.
-	  But we cannot answer this until we realize the Z implies Y and X can be linked to Z.<br><br>
+				<h2>Methodology</h2>
+				We divide the training process into four main steps: embedding extraction, counterfactual estimation, and 
+				prescription policy learning (neural network training). <br><br>
+				<h3>Embedding extraction</h3>
+				The first step in the model pipeline is to extract embeddings from the structured and unstructured data. <br>
+				<h4>Structured data</h4> 
+				We extract embeddings from structured feature data through traditional preprocessing techniques as 
+				described below, where the technique depends on whether the feature is numerical, categorical, or ordinal.
+				<ol>
+					<li>
+						<b>Numerical features.</b> We normalize numerical features to the interval [0,1] for the 
+						counterfactual estimation and model training steps. This increases stability and helps to weight features equally!
+					</li>
+					<li>
+						<b>Categorical features.</b> For categorical features, we use one-hot encodings to convert them to 
+						binary features, such that each category becomes a new indicator feature.
+					</li>
+					<li><b>Ordinal features</b> Ordinal features are categorical features whose values carry numerical information. 
+						Since these categories have a natural order to them, we can assign each category a number such as 1 to 5, 
+						where relative magnitude holds information. For example, 
+						a feature, "Age Groups", may take on the following values: "0-18", "19-24", "25-49", "50-74", "75-100"; we 
+						can assign these to numbers 1 - 5, such that "0-18" is assigned 1, and so on. That way, an individual with an age of 
+						"1" in the preprocessed data indicates that they are younger relative to an individual with an age of "3". 
+						We then treat these ordinal features 
+						as numerical features in our experiments.
+					</li>
+				</ol>
+				<h4>Unstructured data</h4>
+				We extract embeddings from unstructured data using pretrained, deep learning models. By passing each observation's 
+				unstructured data through these pretrained models, we can obtain a vector representation of the unstructured datapoint. 
+				In particular, for our particular use case in liver trauma, we use Clinical Longformer, 
+				a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
+				<a href="#ref_7">[7]</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. <br><br>
 
-	  Now let's write some math!<br>
+				A 768-dimensional embedding vector, however, is very large for training a neural network with only FIXME datapoints. In order to 
+				improve stability, tractability, and performance, we therefore 
+				apply Principle Component Analysis (PCA) to reduce the dimensions of the clinical note embeddings. 
+				We tried reducing to a 32-dimensional representation, and it works well for the liver trauma dataset. <br><br>
+
+				While we specifically use ClinicalLongformer, we observe that any pretrained large language model (LLM) may be used to process 
+				unstructured text data. This makes it easy to update the model with improved, future LLMs, as well as flexible in application to 
+				other datasets and use cases. Additionally, we want to point out that this methodology can easily be applied to image data, by 
+				utilizing any pretrained computer vision (CV) model to process unstructured image data and obtain image embeddings. This results in 
+				an embedding extraction step for unstructured data that is not only highly accessible, but also highly flexible. <br><br>
+
+				<h3>Counterfactual estimation</h3>
+				Before training the prescriptive neural networks, we must first perform a counterfactual estimation process. 
+				Because the prescriptive problem's dataset only contains historical observational data, the counterfactuals are unknown, 
+				e.g., the hypothetical outcomes \( y(\boldsymbol{x}_i, t) \) for \( t \neq t_{i} \). Thus, before model training, 
+				we perform a counterfactual estimation step inspired by <a href="#ref-doubly-robust-policy">Dudik et al. (2014)</a>, 
+				which estimates the outcomes for each observation under every treatment. <br><br>
+
+				We aim to produce \( \Gamma \), a rewards matrix where each \( \Gamma_{i,t} \) is the estimated outcome of 
+				applying treatment \( t \) to the \( i^{\text{th}} \) observation. We now review the three main methods for counterfactual estimation:
+				<ol>
+					<li>
+						<b>Direct method.</b> T This method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
+						 by training separate models, one for each treatment \( t \). During training, each model uses 
+						 only the subset of the observations that received treatment \( t \). 
+						These models can be random forests or boosting methods and output an estimated outcome \( \hat{y_{t}}(\boldsymbol{x}) \) 
+						for when treatment \( t \) is hypothetically applied to observation \( \boldsymbol{x} \).
+					</li>
+					<li>
+						<b>Propensity score estimation.</b>  This method is used to calculate the probability \( p_{i,t} \) 
+						that treatment \( t \) is assigned to observation \( i \). 
+						The observational data \( \boldsymbol{x}_{i} \) is used to train a 
+						classification model that predicts treatment assignments for each observation. 
+						Then, using this model, the probability that each observation receives its prescribed treatment is calculated. 
+						Here, random forests or boosting methods are also employed.
+					</li>
+					<li><b>Doubly robust estimation.</b> 
+						Because direct estimation is often prone to treatment assignment bias, the doubly-robust 
+						estimator attempts to mitigate this bias by re-weighting the estimated direct outcomes with 
+						propensity score probabilities (the probability \( p_{i,t} \) that treatment \( t \) is assigned to 
+						observation \( i \)). 
+						This reweighting is expressed in Equation below, which calculates the 
+						doubly-robust reward matrix \( \Gamma \):
+						<p style="text-align: center;">
+							\( \Gamma_{i,t} = \hat{y_{t}}(\boldsymbol{x}) + \frac{\mathbb{1}\{t = t_{i}\}}{p_{i,t}} \big(y_{i} - \hat{y_{t}}(\boldsymbol{x})\big). \)
+						</p>
+					</li>
+				</ol>
+
+				<h3>Prescription policy learning through feedforward neural networks</h3>
+
+				<p>
+					A feedforward neural network consists of layers of interconnected neurons, which are computational units that are 
+					each characterized by weights 
+					\( \{a_{i}\}_{i=1}^p \), a bias \( b \), and a nonlinear activation function \( h \). Given an input vector 
+					\( \boldsymbol{x} \in \mathbb{R}^p \), the neuron calculates 
+					\( y = \sum_{i=1}^{p}a_{i}x_{i} + b \), a weighted sum of the input's components, and passes the result \( y \) through 
+					\( h \) to produce the neuron's output \( o = h(y) \) that serves as the input to the subsequent neuron. 
+					As observational inputs \( \boldsymbol{x}_i \) pass through this network of interconnected neurons, this calculation is 
+					performed in a nested manner, and the output of the final layer is computed, from which a prespecified loss function is 
+					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
+					structure is presented in Figure 1.
+				</p>
+				<figure>
+					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
+					<figcaption>Architecture of a feedforward neural network (adapted from [fnn-image]).</figcaption>
+				</figure>
+				<p>
+					Without loss of generality, we assume our goal is to minimize outcomes in the prescriptive problem. The objective of our 
+					prescriptive neural network is to minimize total rewards for the prescriptions \( \tau(\boldsymbol{x}_i) \) assigned to each 
+					datapoint \( \boldsymbol{x}_i \) by the network:
+				</p>
+				<p style="text-align: center;">
+					\( \min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{N_t} \mathbb{1} \{\tau(\boldsymbol{x}_i) = t\} \cdot \Gamma_{i,t}. \)
+				</p>
+				<p>
+					Because the indicator function is not differentiable, the backpropagation algorithm cannot exactly handle this objective. 
+					We therefore "soften" the objective and leverage an approach analogous to that of multi-classification networks. The PNN assigns 
+					treatments probabilistically, such that its output layer consists of \( N_t \) neurons, one for each distinct treatment 
+					(as multi-classification networks have an output corresponding to each target class). We denote the output vector of the PNN as 
+					\( \boldsymbol{z} \in \mathbb{R}^{N_t} \) and apply a softmax activation function to these output neurons to obtain a probability 
+					distribution over the distinct treatments, such that \( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \), 
+					where \( \sigma(\cdot) \) denotes the softmax function and is defined explicitly below:
+				</p>
+				<p style="text-align: center;">
+					\( \sigma_t(\boldsymbol{z}) = \frac{\exp{z_{t}}}{\sum_{j=1}^{T} \exp{z_{j}}} \text{ for } t=1,\ldots,T \text{ and } \boldsymbol{z} 
+					\in \mathbb{R}^T. \)
+				</p>
+				<p>
+					We obtain the final prescription of the network by finding the treatment \( t \) with the highest probability 
+					\( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \). This approach is analogous to a classification network, 
+					where the predicted class is the one with the highest probability among the network's output nodes. The tractable objective for 
+					our PNN models is therefore:
+				</p>
+				<p style="text-align: center;">
+					\( \min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{T} \mathbb{P}[\tau(\boldsymbol{x}_i) = t] \cdot \Gamma_{i,t}. \)
+				</p>
+			</body>
+		
+	  <!-- 	  
 	  <center>
+		
 		<math xmlns="http://www.w3.org/1998/Math/MathML">
 		  <mrow>
 			<mrow>
@@ -311,12 +446,9 @@
 		  <mo>=</mo>
 		  <mi>x</mi>
 		</math>
-	  </center>
+	  </center> -->
 	  <br>
-	  It's probably best to ask an LLM to help do the web
-	  formatting for math. You can tell it "convert this latex equation into MathML: $$\frac{\partial dy}{\partial dx} = x$$"
-	  But it took me a few tries. So, if you get frustrated, you can embed an image of the equation, or use other packages for
-	  rendering equations on webpages.
+	  
 		</div>
 		<div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
 		</div>
@@ -341,7 +473,7 @@
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-				<h1>Results</h1>
+				<h1>Experiments and Results</h1>
 				Let's end with some discussion of the implications and limitations.
 		    </div>
 		    <div class="margin-right-block">
