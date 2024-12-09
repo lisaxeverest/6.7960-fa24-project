@@ -385,25 +385,15 @@
 				</ol>
 				<h4>Unstructured data</h4>
 				<p>
-					We extract embeddings from unstructured data using pretrained, deep learning models. By passing each observation's 
-					unstructured data through these pretrained models, we can obtain a vector representation of the unstructured datapoint. 
-					In particular, for our particular use case in liver trauma, we use Clinical Longformer, 
+					We extract embeddings from unstructured data using the pretrained model ClinicalLongformer, 
 					a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
 					<a href="#ref_7">[7]</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. 
-				</p>
-				<p>
-					A 768-dimensional embedding vector, however, is very large for training a neural network with only FIXME datapoints. In order to 
-					improve stability, tractability, and performance, we therefore 
+					However, this is a very high-dimensional input for training a neural network using only 722 datapoints (size of our liver dataset!). 
+					In order to 
+					improve stability, tractability, and performance, we  
 					apply Principle Component Analysis (PCA) to reduce the dimensions of the clinical note embeddings. 
 					We tried reducing to a 32-dimensional representation, and it works well for the liver trauma dataset.
 				</p>
-				<p>
-					While we specifically use ClinicalLongformer, we observe that any pretrained large language model (LLM) may be used to process 
-					unstructured text data. This makes it easy to update the model with improved, future LLMs, as well as flexible in application to 
-					other datasets and use cases. Additionally, we want to point out that this methodology can easily be applied to image data, by 
-					utilizing any pretrained computer vision (CV) model to process unstructured image data and obtain image embeddings. This results in 
-					an embedding extraction step for unstructured data that is not only highly accessible, but also highly flexible.
-				</p> 
 				<h3>Counterfactual estimation</h3>
 				<p>
 					Because the prescriptive problem's dataset only contains historical observational data, the counterfactuals are unknown, 
@@ -421,8 +411,8 @@
 						<b>Direct method.</b> T This is a method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
 						 by training separate models, one for each treatment \( t \). During training, each model uses 
 						 only the subset of the observations that received treatment \( t \). 
-						These models can be random forests or boosting methods and output an estimated outcome \( \hat{y_{t}}(\boldsymbol{x}) \) 
-						for when treatment \( t \) is hypothetically applied to observation \( \boldsymbol{x} \).
+						<!-- These models can be random forests or boosting methods and output an estimated outcome \( \hat{y_{t}}(\boldsymbol{x}) \) 
+						for when treatment \( t \) is hypothetically applied to observation \( \boldsymbol{x} \). -->
 					</li>
 					<li>
 						<b>Propensity score estimation.</b>  This is a method is used to calculate the probability \( p_{i,t} \) 
@@ -430,15 +420,13 @@
 						The observational data \( \boldsymbol{x}_{i} \) is used to train a 
 						classification model that predicts treatment assignments for each observation. 
 						Then, using this model, the probability that each observation receives its prescribed treatment is calculated. 
-						Here, random forests or boosting methods are also employed.
+						<!-- Here, random forests or boosting methods are also employed. -->
 					</li>
 					<li><b>Doubly robust estimation.</b> 
 						Because direct estimation is often prone to treatment assignment bias, the doubly-robust 
 						estimator is a method that attempts to mitigate this bias by re-weighting the estimated direct outcomes with 
-						propensity score probabilities (the probability \( p_{i,t} \) that treatment \( t \) is assigned to 
-						observation \( i \)). 
-						This reweighting is expressed in Equation below, which calculates the 
-						doubly-robust reward matrix \( \Gamma \):
+						propensity score probabilities. 
+						This reweighting is expressed as \( \Gamma \) below, in what we call the "reward matrix": 
 						<p style="text-align: center;">
 							\( \Gamma_{i,t} = \hat{y_{t}}(\boldsymbol{x}) + \frac{\mathbb{1}\{t = t_{i}\}}{p_{i,t}} \big(y_{i} - \hat{y_{t}}(\boldsymbol{x})\big). \)
 						</p>
@@ -546,7 +534,7 @@
 					For our experiments, we use the following data split: 50% for training and 50% for the test set. The typical ratios of 
 					80-20 or 70-30 are not applicable in our prescriptive problem because we need to estimate counterfactuals for the test set 
 					independently of the train set; this allows us to objectively and fairly evaluate the performance of the PNNs without 
-					data leakage from the training set. Think about this: if we had estaimted counterfactuals for the entire dataset altogether, then 
+					data leakage from the training set. Think about this: if we had estimated counterfactuals for the entire dataset altogether, then 
 					there is leakage by training the PNN on the training set and evaluating it via the estimated rewards on the test set! And, to ensure 
 					quality of estiamted counterfactuals, we need more data on both the test and training set. So a 50/50 split is necessary.
 				</p>
@@ -594,25 +582,20 @@
 				the average performance of each split's models. This ensures that the results are not tailored to a specific data 
 				split, and also enables the investigation of stability of the prescriptive methods. Also, given the randomness often 
 				associated with training machine learning models, we train multiple models per split and also average their performance. 
-				In total, we perform 5 randomized data splits per dataset, and we train 5 models per split, so we train 25 models in total.
+				In total, we perform 5 randomized data splits per dataset; for each split, we train 5 iterations of 5 models each. For each iteration,
+				we also ensemble the 5 respective models using a hard-voting framework. We also train two types of models: a tabular model trained 
+				on only the tabular features, and a multimodal model trained on the tabular and notes features. We present the results of the 125 individual models and 25 
+				ensemble models in Table \ref{tab:liver-results-perseed}.
 				</p>	
-				<p>
-				For each of the five data splits, not only do we train five iterations of five models each (e.g. 25 individual models per split), but 
-				for each iteration, we also ensemble the respective five models using a hard-voting framework, e.g. five ensemble models per split. 
-				We present the results in Table \ref{tab:liver-results-perseed}. We find that both the PNN and ensembled PNN models are able to decrease 
-				(improve) mortality rate, with the ensemble models outperforming the individual PNN models. Furthermore, the multimodal (tabular and note) 
-				models outperform their tabular counterparts, demonstrating the benefit of increased information from the added language modality.
-				</p>
-
 				<table>
-					<caption>
+					<!-- <caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
 						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
 						split results, we report the average improvement and standard deviation across the five splits.
-					</caption>
+					</caption> -->
 					<thead>
 						<tr>
-							<!-- <th>Estimator</th> -->
+							<th>Estimator</th>
 							<th>Split</th>
 							<th>Method</th>
 							<th>Tabular model</th>
@@ -622,7 +605,7 @@
 					<tbody>
 						<!-- Tabular Estimator -->
 						<tr>
-							<!-- <td rowspan="12">Tabular</td> -->
+							<td rowspan="12">Tabular</td>
 							<td rowspan="2">1</td>
 							<td>PNN</td>
 							<td>0.0833 ± 0.1561</td>
@@ -689,7 +672,7 @@
 							<td><strong>0.3561 ± 0.1508</strong></td>
 						</tr>
 						<!-- Tabular & Notes Estimator -->
-						<!-- <tr>
+						<tr>
 							<td rowspan="12">Tabular &amp; Notes</td>
 							<td rowspan="2">1</td>
 							<td>PNN</td>
@@ -755,11 +738,11 @@
 							<td>Ensemble PNN</td>
 							<td>0.3413 ± 0.0957</td>
 							<td><strong>0.4582 ± 0.1129</strong></td>
-						</tr> -->
+						</tr>
 					</tbody>
 				</table>
 
-				<table>
+				<!-- <table>
 					<caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
 						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
@@ -842,7 +825,7 @@
 							<td><strong>0.4582 ± 0.1129</strong></td>
 						</tr>
 					</tbody>
-				</table>
+				</table> -->
 				
 		    </div>
 		    <div class="margin-right-block">
@@ -854,13 +837,14 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Discussion</h2>
+				We find that both the PNN and ensembled PNN models are able to succesfully decrease (improve) mortality rate, with the 
+				ensemble models outperforming the individual PNN models! Furthermore, we also find that within each random data split, the 
+				ensemble model is much more stable than the individual models; both for the tabular 
+				models and particularly for the multimodal models within each seed in Table (), the standard deviation of the 
+				ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. 
 				
-				In the liver trauma injuries dataset, not only does a hard-voting ensembling approach improve average performance across data splits, 
-				but we also find that within each random data split, the ensemble model is much more stable than the individual models; both for the tabular 
-				models and particularly for the multimodal models within each seed in Table \ref{tab:liver-results-perseed}, the standard deviation of the 
-				ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. This is likely because the liver 
-				trauma injuries dataset is particularly small with 722 rows, so this dataset especially benefits from the ensembling of the PNNs. Therefore, 
-				depending on the nature and difficulty of the dataset, a hard-voting ensemble approach can be beneficial for both model performance and stability.
+				Furthermore, the multimodal (tabular and note) models outperform their tabular counterparts, demonstrating the benefit of 
+				increased information from the added language modality.
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
