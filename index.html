@@ -180,7 +180,32 @@
 	    vertical-align: top; /* Aligns them at the top, you can adjust this to middle, bottom, etc., based on your needs */
 	    width: 50px; /* Optional: Adds space between the div and the paragraph */
 	}
-
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px;
+        text-align: left;
+    }
+    table caption {
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+        text-align: center;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tr:hover {
+        background-color: #f1f1f1;
+    }
 </style>
 	
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -248,39 +273,42 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Introduction and Motivation</h2>
-				With the increasing volume of data available, it has become more valuable and critical to utilize such resource 
-				to develop data-driven algorithms that could guide personalized decision-making.
-				Despite the fact that deep learning has primarily been used for prediction and classification tasks to improve accuracy,
-				there could be substantial value added to such personalized prescription problems by leveraging 
-				the high flexibility of neural networks to capture non-linear interactions between covariates 
-				and combine different modalities of data such as tabular, language, and image data.
-				Therefore, in this project, we combine optimization and deep learning to develop a prescriptive neural network 
-				that outputs prescriptions as a function of individual characteristics that optimize the desired objective. 
-				<br><br> 
-
-				Personalized decision-making is particularly important in healthcare applications since patients with different characteristics 
-				might be handled differently in reality. Previous literature has demonstrated benefits of such personalized interventions in various
-				medical settings. 
-				<a href="#ref_1"> Bayati et al. (2014) </a> uses readmission predictions of heart failure patients to 
-				guide individual treatment deicisions post-discharge and show a reduction in both readmission rate and associated cost.
-				<a href="#ref_2"> Bertsimas et al. (2017) </a> leverage k-nearest neighbors to predict outcomes of type-2 diabetes patients
-				under different combination of drugs and show that personalized management to diabete patients 
-				yield major improvement in outcomes compared to the standard of care that does not differentiate.
-				<br><br> 
-
-				In this work, we apply our method on the management of trauma patients with liver injuries. 
-				Acute liver injury is one of the two most common solid organ injuries in blunt trauma victims. 
-				However, inaccuracies exist in the grading of liver injuries by human read and interpretation of CT scans, 
-				which may lead to mistreatment.<a href="#ref_3"> (Georg et al., 2014) </a> In particular, severe liver lacerations tend to require surgeries, whereas less severe injuries 
-				are usually treated with more conservative strategies. 
-				Therefore, personalized treatment for the patient is important in trauma management, making this an appropriate and important
-				motivating application to demonstrate our method.
-
-
+				<p>
+					With the increasing volume of data available, it has become more valuable and critical to utilize such resources 
+					to develop data-driven algorithms that could guide personalized decision-making.
+					Despite the fact that deep learning has primarily been used for prediction and classification tasks to improve accuracy,
+					there could be substantial value added to such personalized prescription problems by leveraging 
+					the high flexibility of neural networks to capture non-linear interactions between covariates 
+					and combine different modalities of data such as tabular, language, and image data.
+					Therefore, in this project, we try to combine optimization and deep learning to develop a neural network 
+					that outputs prescriptions as a function of individual characteristics that optimize the desired objective. We will call 
+					these neural networks Prescriptive Neural Networks (PNN)!
+				</p>
+				<p>
+					Furthermore, we want to show how the PNN works on a real-world application in healthcare, since personalized decision-making is 
+					very important in medicine; patients with different characteristics 
+					might be handled differently in reality. Previous literature has demonstrated benefits of such personalized interventions in various
+					medical settings. 
+					<a href="#ref_1"> Bayati et al. (2014) </a> uses readmission predictions of heart failure patients to 
+					guide individual treatment decisions post-discharge and show a reduction in both readmission rate and associated cost.
+					<a href="#ref_2"> Bertsimas et al. (2017) </a> leverage k-nearest neighbors to predict outcomes of type-2 diabetes patients
+					under different combination of drugs and show that personalized management to diabete patients 
+					yield major improvement in outcomes compared to the standard of care that does not differentiate.
+				</p>
+				<p>
+					We have used a dataset on liver trauma injuries as our case study for how PNNs work in real-life. For liver injuries in particular, 
+					the management of trauma patients is very important. 
+					Acute liver injury is one of the two most common solid organ injuries in blunt trauma victims. 
+					However, inaccuracies exist in the grading of liver injuries by human read and interpretation of CT scans, 
+					which may lead to mistreatment <a href="#ref_3"> (Georg et al., 2014) </a>. In particular, severe liver lacerations tend to require surgeries, whereas less severe injuries 
+					are usually treated with more conservative strategies. 
+					Therefore, personalized treatment for the patient is important in trauma management, making this an appropriate and important
+					motivating application to demonstrate our method.
+				</p>
 		    </div>
-		    <div class="margin-right-block">
+		    <!-- <div class="margin-right-block">
 						Margin note that clarifies some detail #main-content-block for intro section.
-		    </div>
+		    </div> -->
 		</div>
 
 		<div class="content-margin-container" id="related_work">
@@ -288,49 +316,51 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Related work</h2>
-				The most traditional method to personalized treatment is Regress and Compare in which a regression is trained on each set of training data by their treatment. 
-				A given observation is then evaluated on models trained from all treatment options and the treatment that optimizes its outcome is selected. 
-				However, the possible lack of data for each separate model and the lack of interpretability and may reduce the performance and applicability of this method. 
-				<br><br> 
-				
-				Recent literature in personalized decision-making has primarily leveraged tree-based machine learning methods and causal methods to improve upon regress and compare. 
-				<h4>Tree-based methods</h4>
-				<a href="#ref_readmission"> Kallus (2017) </a> extends from Regress and Compare and proposes a single-task method that recursively partitions the input space with the smallest sum of impurities.
-				<a href="#ref_diabetes"> Bertsimas et al. (2019) </a> extends the Optimal Classification Trees in <a href="#ref_3"> Bertsimas and Dunn (2017) </a> - an interpreatble tree-based method - to prescription. 
-				They introduce Optimal Prescriptive Trees which estimates the counterfactual outcome of each observation under each treatment during training 
-				to minimize both the prediction and the prescription error. 
-				<a href="#ref_4"> Amram et al. (2022) </a> further develops Optimal Policy Tree in which counterfactuals are estimated separately prior to the tree training. 
-				A decision tree is then trained to obtain the optimal policy.
-
-				<h4>Causal methods</h4>
-				
-
-				<h4>Deep learning methods</h4>
-				More recently, there has been emerging literature on combining prescription and neural networks. 
-				<a href="#ref_5"> Sun and Tsiourvas (2023) </a> proposes a prescriptive neural network model using ReLU as the activation function. 
-				In particular, they partition the sample space into disjoint polyhedra and assign a treament to all data points that belong in each partition. 
-				They further show that every such trained network can be transformed to a prescriptive tree with hyperplane splits. 
-				<a href="#ref_6">Bergman et al. (2022) </a> formulates and solves an optimization problem using predictions obtained through a neural network in the objective function. 
-				They also restrict to ReLU as the activation function to allow modelling as a network flow problem. 
-				Relatedly, <a href="#ref_7">Patil et al. (2024)</a> formulates binary activation functions and loss function of neural networks
-				as a mixed-integer programming problem, then combines with counterfactual estimation to obtain optimal treatments. 
-				<br><br> 
-				We contribute to this strand of literature by relaxing the restriction to ReLU or binary activation functions and allowing any type of nonlinear activation functions in the neural network. 
-				Moreover, we solve the prescription problem that optimizes the objective simultaneously as training the neural network.
-
-
+				Let's look at some related work in this area!
+				<p>	
+					The most traditional method to personalized treatment is Regress and Compare in which a regression is trained on each set of training data by their treatment. 
+					A given observation is then evaluated on models trained from all treatment options and the treatment that optimizes its outcome is selected. 
+					<!-- However, the possible lack of data for each separate model and the lack of interpretability and may reduce the performance and applicability of this method.  -->
+				</p>
+				<p>
+					In the past decade, tree-based machine learning methods and causal methods have sought to improve upon Regress and Compare. 
+					For example, <a href="#ref_1"> Kallus (2017) </a> extends Regress and Compare and proposes a single-task method that recursively 
+					partitions the input space with the smallest sum of impurities for prescription purposes. <a href="#ref_2"> Bertsimas et al. (2019) </a> 
+					extends the Optimal Classification Trees in <a href="#ref_3"> Bertsimas and Dunn (2017) </a> - an interpretable tree-based method - to prescription. 
+					They introduce Optimal Prescriptive Trees which estimates the counterfactual outcome of each observation under each treatment during training 
+					to minimize both the prediction and the prescription error. Finally, <a href="#ref_4"> Amram et al. (2022) </a> further develops Optimal Policy Tree,
+					where counterfactuals are estimated separately prior to the tree training. 
+					A decision tree is then trained to obtain the optimal policy.
+				</p>
+				<p>	
+					Even more recently, in the past year, there has been work on combining prescription and deep learning. 
+					<a href="#ref_5"> Sun and Tsiourvas (2023) </a> proposes a prescriptive neural network model using ReLU as the activation function. 
+					In particular, they partition the sample space into disjoint polyhedra and assign a treament to all data points that belong in each partition. 
+					They further show that every such trained network can be transformed to a prescriptive tree with hyperplane splits. 
+					<a href="#ref_6">Bergman et al. (2022) </a> formulates and solves an optimization problem using predictions obtained through a neural network in the objective function. 
+					They also restrict to ReLU as the activation function to allow modelling as a network flow problem. 
+					Relatedly, <a href="#ref_7">Patil et al. (2024)</a> formulates binary activation functions and loss function of neural networks
+					as a mixed-integer programming problem, then combines with counterfactual estimation to obtain optimal treatments. 
+				</p>
 		    </div>
-		    <div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
+		    <div class="margin-right-block" style="transform: translate(0%, 70%);"> <!-- you can move the margin notes up and down with translate -->
+				<p>	
+					<b>So what's our contribution?</b> We attempt to contribute to the intersection of prescription and deep learning by relaxing 
+					the restriction to ReLU or binary activation functions and 
+					allowing any type of nonlinear activation functions in the neural network. 
+					Moreover, we solve the prescription problem that optimizes the objective simultaneously as training the neural network. 
+				</p>
 		    </div>
 		</div><div class="content-margin-container" id="Methodology">
 			<div class="margin-left-block">
 			</div>
 		<div class="main-content-block">
 				<h2>Methodology</h2>
-				We divide the training process into four main steps: embedding extraction, counterfactual estimation, and 
+				Let's first learn about how our PNN model pipeline works. We divide the training process into four main steps: 
+				embedding extraction, counterfactual estimation, and 
 				prescription policy learning (neural network training). <br><br>
 				<h3>Embedding extraction</h3>
-				The first step in the model pipeline is to extract embeddings from the structured and unstructured data. <br>
+				Because our liver dataset is multimodal, the first step in the model pipeline is to extract embeddings each from the structured and unstructured data. <br>
 				<h4>Structured data</h4> 
 				We extract embeddings from structured feature data through traditional preprocessing techniques as 
 				described below, where the technique depends on whether the feature is numerical, categorical, or ordinal.
@@ -354,42 +384,48 @@
 					</li>
 				</ol>
 				<h4>Unstructured data</h4>
-				We extract embeddings from unstructured data using pretrained, deep learning models. By passing each observation's 
-				unstructured data through these pretrained models, we can obtain a vector representation of the unstructured datapoint. 
-				In particular, for our particular use case in liver trauma, we use Clinical Longformer, 
-				a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
-				<a href="#ref_7">[7]</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. <br><br>
-
-				A 768-dimensional embedding vector, however, is very large for training a neural network with only FIXME datapoints. In order to 
-				improve stability, tractability, and performance, we therefore 
-				apply Principle Component Analysis (PCA) to reduce the dimensions of the clinical note embeddings. 
-				We tried reducing to a 32-dimensional representation, and it works well for the liver trauma dataset. <br><br>
-
-				While we specifically use ClinicalLongformer, we observe that any pretrained large language model (LLM) may be used to process 
-				unstructured text data. This makes it easy to update the model with improved, future LLMs, as well as flexible in application to 
-				other datasets and use cases. Additionally, we want to point out that this methodology can easily be applied to image data, by 
-				utilizing any pretrained computer vision (CV) model to process unstructured image data and obtain image embeddings. This results in 
-				an embedding extraction step for unstructured data that is not only highly accessible, but also highly flexible. <br><br>
-
+				<p>
+					We extract embeddings from unstructured data using pretrained, deep learning models. By passing each observation's 
+					unstructured data through these pretrained models, we can obtain a vector representation of the unstructured datapoint. 
+					In particular, for our particular use case in liver trauma, we use Clinical Longformer, 
+					a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
+					<a href="#ref_7">[7]</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. 
+				</p>
+				<p>
+					A 768-dimensional embedding vector, however, is very large for training a neural network with only FIXME datapoints. In order to 
+					improve stability, tractability, and performance, we therefore 
+					apply Principle Component Analysis (PCA) to reduce the dimensions of the clinical note embeddings. 
+					We tried reducing to a 32-dimensional representation, and it works well for the liver trauma dataset.
+				</p>
+				<p>
+					While we specifically use ClinicalLongformer, we observe that any pretrained large language model (LLM) may be used to process 
+					unstructured text data. This makes it easy to update the model with improved, future LLMs, as well as flexible in application to 
+					other datasets and use cases. Additionally, we want to point out that this methodology can easily be applied to image data, by 
+					utilizing any pretrained computer vision (CV) model to process unstructured image data and obtain image embeddings. This results in 
+					an embedding extraction step for unstructured data that is not only highly accessible, but also highly flexible.
+				</p> 
 				<h3>Counterfactual estimation</h3>
-				Before training the prescriptive neural networks, we must first perform a counterfactual estimation process. 
-				Because the prescriptive problem's dataset only contains historical observational data, the counterfactuals are unknown, 
-				e.g., the hypothetical outcomes \( y(\boldsymbol{x}_i, t) \) for \( t \neq t_{i} \). Thus, before model training, 
-				we perform a counterfactual estimation step inspired by <a href="#ref-doubly-robust-policy">Dudik et al. (2014)</a>, 
-				which estimates the outcomes for each observation under every treatment. <br><br>
+				<p>
+					Because the prescriptive problem's dataset only contains historical observational data, the counterfactuals are unknown, 
+					e.g., the hypothetical outcomes \( y(\boldsymbol{x}_i, t) \) for \( t \neq t_{i} \). Thus, before model training, 
+					we perform a counterfactual estimation step. This is something
+					from the causal inference literature, and is a typical way of dealing with unknown outcomes! 
+					Our approach is inspired by <a href="#ref-doubly-robust-policy">Dudik et al. (2014)</a>, 
+					which estimates the outcomes for each observation under every treatment.
+				</p>
 
 				We aim to produce \( \Gamma \), a rewards matrix where each \( \Gamma_{i,t} \) is the estimated outcome of 
 				applying treatment \( t \) to the \( i^{\text{th}} \) observation. We now review the three main methods for counterfactual estimation:
 				<ol>
 					<li>
-						<b>Direct method.</b> T This method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
+						<b>Direct method.</b> T This is a method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
 						 by training separate models, one for each treatment \( t \). During training, each model uses 
 						 only the subset of the observations that received treatment \( t \). 
 						These models can be random forests or boosting methods and output an estimated outcome \( \hat{y_{t}}(\boldsymbol{x}) \) 
 						for when treatment \( t \) is hypothetically applied to observation \( \boldsymbol{x} \).
 					</li>
 					<li>
-						<b>Propensity score estimation.</b>  This method is used to calculate the probability \( p_{i,t} \) 
+						<b>Propensity score estimation.</b>  This is a method is used to calculate the probability \( p_{i,t} \) 
 						that treatment \( t \) is assigned to observation \( i \). 
 						The observational data \( \boldsymbol{x}_{i} \) is used to train a 
 						classification model that predicts treatment assignments for each observation. 
@@ -398,7 +434,7 @@
 					</li>
 					<li><b>Doubly robust estimation.</b> 
 						Because direct estimation is often prone to treatment assignment bias, the doubly-robust 
-						estimator attempts to mitigate this bias by re-weighting the estimated direct outcomes with 
+						estimator is a method that attempts to mitigate this bias by re-weighting the estimated direct outcomes with 
 						propensity score probabilities (the probability \( p_{i,t} \) that treatment \( t \) is assigned to 
 						observation \( i \)). 
 						This reweighting is expressed in Equation below, which calculates the 
@@ -410,7 +446,6 @@
 				</ol>
 
 				<h3>Prescription policy learning through feedforward neural networks</h3>
-
 				<p>
 					A feedforward neural network consists of layers of interconnected neurons, which are computational units that are 
 					each characterized by weights 
@@ -428,8 +463,8 @@
 					<figcaption>Architecture of a feedforward neural network (adapted from [fnn-image]).</figcaption>
 				</figure>
 				<p>
-					Without loss of generality, we assume our goal is to minimize outcomes in the prescriptive problem. The objective of our 
-					prescriptive neural network is to minimize total rewards for the prescriptions \( \tau(\boldsymbol{x}_i) \) assigned to each 
+					Since we want to minimize mortality risk in our liver dataset, our objective for the 
+					prescriptive neural network is to minimize total rewards for the prescriptions \( \tau(\boldsymbol{x}_i) \) that are assigned to each 
 					datapoint \( \boldsymbol{x}_i \) by the network:
 				</p>
 				<p style="text-align: center;">
@@ -437,11 +472,11 @@
 				</p>
 				<p>
 					Because the indicator function is not differentiable, the backpropagation algorithm cannot exactly handle this objective. 
-					We therefore "soften" the objective and leverage an approach analogous to that of multi-classification networks. The PNN assigns 
-					treatments probabilistically, such that its output layer consists of \( N_t \) neurons, one for each distinct treatment 
-					(as multi-classification networks have an output corresponding to each target class). We denote the output vector of the PNN as 
-					\( \boldsymbol{z} \in \mathbb{R}^{N_t} \) and apply a softmax activation function to these output neurons to obtain a probability 
-					distribution over the distinct treatments, such that \( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \), 
+					So, we decide to "soften" the objective and leverage an approach analogous to that of multi-classification networks. As a result, the PNN assigns 
+					treatments probabilistically, so that its output layer consists of \( N_t \) neurons, one for each distinct treatment. This is like how 
+					multi-classification networks have an output corresponding to each target class! Let's denote the output vector of the PNN as 
+					\( \boldsymbol{z} \in \mathbb{R}^{N_t} \). In the PNN, we apply a softmax activation function to these output neurons to obtain a probability 
+					distribution over the distinct treatments, so that \( \mathbb{P}[\tau(\boldsymbol{x}_i) = t] = \sigma_t(\boldsymbol{z}) \), 
 					where \( \sigma(\cdot) \) denotes the softmax function and is defined explicitly below:
 				</p>
 				<p style="text-align: center;">
@@ -504,8 +539,311 @@
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-				<h1>Experiments and Results</h1>
-				Let's end with some discussion of the implications and limitations.
+				<h2>Experiments and Results</h2>
+				Now that we know what a PNN is and how to train one, we will present the experiment setup and results for our application on the liver trauma injury dataset.
+				<h3>Data Split</h3>
+				<p>
+					For our experiments, we use the following data split: 50% for training and 50% for the test set. The typical ratios of 
+					80-20 or 70-30 are not applicable in our prescriptive problem because we need to estimate counterfactuals for the test set 
+					independently of the train set; this allows us to objectively and fairly evaluate the performance of the PNNs without 
+					data leakage from the training set. Think about this: if we had estaimted counterfactuals for the entire dataset altogether, then 
+					there is leakage by training the PNN on the training set and evaluating it via the estimated rewards on the test set! And, to ensure 
+					quality of estiamted counterfactuals, we need more data on both the test and training set. So a 50/50 split is necessary.
+				</p>
+
+				<h3>Network Architecture</h3>
+				<p>
+					For the PNN itself, we fine-tune the following hyperparameters:
+				</p>
+				<ul>
+					<li><strong>Number of layers of the network.</strong> We experiment with both shallow and deep networks, and we generally observed
+						that deeper networks do not necessarily improve prescriptive results.
+					</li>
+					<li><strong>Number of nodes at each layer.</strong> Because we use a relaively smaller dataset, we find that less layers are needed
+						to train a good prescriptive model.
+					</li>
+					<li><strong>Batch size.</strong> This parameter determines the number of samples used in each forward pass of the network 
+						and for backpropagation, where the network parameters are updated after each batch passes through the network. It also affects 
+						the training speed, since too many batches can slow down the training process. Since we have less data, using a larger batch size
+						is not necessarily a problem.
+					</li>
+					<li><strong>Learning rate.</strong> The learning rate is an important parameter of the training process, since it defines how 
+						steep the descent is at each step of the gradient descent algorithm during training. After experimentation, 
+						we find an appropriate learning rate that is not too big so that the algorithm becomes stuck in local optima but also not too 
+						small so that convergence to the optimal value is too slow.
+					</li>
+					<li><strong>Weight decay.</strong> This hyperparameter scales an <code>L<sub>2</sub></code>-regularization term of the network weights that 
+						is added to the objective function to prevent them from taking too large values. Since we normalize the data in the embedding extraction step, 
+						we observe that 
+						lowering the weight decay coefficient and relaxing the weights are actually beneficial and do not result in overfitting.
+					</li>
+					<li><strong>Number of epochs.</strong> The number of epochs is a particularly hard parameter to tune, since we want to prevent 
+						overfitting but also allow the training to continue until sufficient convergence. For this reason, we employ early stopping, 
+						a technique that is adaptive to each specific training process and terminates training when a fluctuation in the validation 
+						loss is observed. Such a fluctuation indicates that the network is no longer improving in out-of-sample data generalization.
+					</li>
+				</ul>
+				<p>
+					On top of these architectural choices, we choose the Adam optimizer. We tune the aforementioned hyperparameters using a 
+					validation set we extract from the training set that is not used in model training. We typically keep 15% of the training 
+					data for the validation set. 
+				</p>
+				<h3>Performance evaluation</h3>
+				<p>
+				To evaluate the models' performance on each dataset, we perform multiple train-validation-test splits and report 
+				the average performance of each split's models. This ensures that the results are not tailored to a specific data 
+				split, and also enables the investigation of stability of the prescriptive methods. Also, given the randomness often 
+				associated with training machine learning models, we train multiple models per split and also average their performance. 
+				In total, we perform 5 randomized data splits per dataset, and we train 5 models per split, so we train 25 models in total.
+				</p>	
+				<p>
+				For each of the five data splits, not only do we train five iterations of five models each (e.g. 25 individual models per split), but 
+				for each iteration, we also ensemble the respective five models using a hard-voting framework, e.g. five ensemble models per split. 
+				We present the results in Table \ref{tab:liver-results-perseed}. We find that both the PNN and ensembled PNN models are able to decrease 
+				(improve) mortality rate, with the ensemble models outperforming the individual PNN models. Furthermore, the multimodal (tabular and note) 
+				models outperform their tabular counterparts, demonstrating the benefit of increased information from the added language modality.
+				</p>
+
+				<table>
+					<caption>
+						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
+						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
+						split results, we report the average improvement and standard deviation across the five splits.
+					</caption>
+					<thead>
+						<tr>
+							<!-- <th>Estimator</th> -->
+							<th>Split</th>
+							<th>Method</th>
+							<th>Tabular model</th>
+							<th>Multimodal model</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Tabular Estimator -->
+						<tr>
+							<!-- <td rowspan="12">Tabular</td> -->
+							<td rowspan="2">1</td>
+							<td>PNN</td>
+							<td>0.0833 ± 0.1561</td>
+							<td>0.0667 ± 0.1959</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.2558 ± 0.0679</td>
+							<td>0.1882 ± 0.1304</td>
+						</tr>
+						<tr>
+							<td rowspan="2">2</td>
+							<td>PNN</td>
+							<td>0.1485 ± 0.1713</td>
+							<td>0.3957 ± 0.1777</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.1789 ± 0.1298</td>
+							<td>0.4974 ± 0.0659</td>
+						</tr>
+						<tr>
+							<td rowspan="2">3</td>
+							<td>PNN</td>
+							<td>-0.1718 ± 0.2931</td>
+							<td>-0.0035 ± 0.1806</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>-0.0459 ± 0.1679</td>
+							<td>0.2119 ± 0.0673</td>
+						</tr>
+						<tr>
+							<td rowspan="2">4</td>
+							<td>PNN</td>
+							<td>0.2097 ± 0.1768</td>
+							<td>0.2872 ± 0.0962</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3319 ± 0.0782</td>
+							<td>0.3805 ± 0.0298</td>
+						</tr>
+						<tr>
+							<td rowspan="2">5</td>
+							<td>PNN</td>
+							<td>0.1016 ± 0.1697</td>
+							<td>0.4766 ± 0.0707</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.212 ± 0.1018</td>
+							<td>0.5024 ± 0.0157</td>
+						</tr>
+						<tr>
+							<td rowspan="2">Average</td>
+							<td>PNN</td>
+							<td>0.0743 ± 0.1460</td>
+							<td>0.2445 ± 0.2072</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.1865 ± 0.1420</td>
+							<td><strong>0.3561 ± 0.1508</strong></td>
+						</tr>
+						<!-- Tabular & Notes Estimator -->
+						<!-- <tr>
+							<td rowspan="12">Tabular &amp; Notes</td>
+							<td rowspan="2">1</td>
+							<td>PNN</td>
+							<td>0.2202 ± 0.2257</td>
+							<td>0.2141 ± 0.1721</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3682 ± 0.0721</td>
+							<td>0.4268 ± 0.0314</td>
+						</tr>
+						<tr>
+							<td rowspan="2">2</td>
+							<td>PNN</td>
+							<td>0.2041 ± 0.1229</td>
+							<td>0.4107 ± 0.0664</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.1822 ± 0.1114</td>
+							<td>0.4623 ± 0.062</td>
+						</tr>
+						<tr>
+							<td rowspan="2">3</td>
+							<td>PNN</td>
+							<td>0.2374 ± 0.1872</td>
+							<td>0.2933 ± 0.0978</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.4283 ± 0.0558</td>
+							<td>0.423 ± 0.048</td>
+						</tr>
+						<tr>
+							<td rowspan="2">4</td>
+							<td>PNN</td>
+							<td>0.1743 ± 0.211</td>
+							<td>0.1572 ± 0.162</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3326 ± 0.0415</td>
+							<td>0.3364 ± 0.081</td>
+						</tr>
+						<tr>
+							<td rowspan="2">5</td>
+							<td>PNN</td>
+							<td>0.2725 ± 0.1439</td>
+							<td>0.6307 ± 0.0417</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3953 ± 0.037</td>
+							<td>0.6424 ± 0.0078</td>
+						</tr>
+						<tr>
+							<td rowspan="2">Average</td>
+							<td>PNN</td>
+							<td>0.2217 ± 0.0367</td>
+							<td>0.3412 ± 0.1877</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3413 ± 0.0957</td>
+							<td><strong>0.4582 ± 0.1129</strong></td>
+						</tr> -->
+					</tbody>
+				</table>
+
+				<table>
+					<caption>
+						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
+						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
+						split results, we report the average improvement and standard deviation across the five splits.
+					</caption>
+					<thead>
+						<tr>
+							<th>Split</th>
+							<th>Method</th>
+							<th>Tabular model</th>
+							<th>Multimodal model</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Tabular & Notes Estimator -->
+						<tr>
+							<td rowspan="2">1</td>
+							<td>PNN</td>
+							<td>0.2202 ± 0.2257</td>
+							<td>0.2141 ± 0.1721</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3682 ± 0.0721</td>
+							<td>0.4268 ± 0.0314</td>
+						</tr>
+						<tr>
+							<td rowspan="2">2</td>
+							<td>PNN</td>
+							<td>0.2041 ± 0.1229</td>
+							<td>0.4107 ± 0.0664</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.1822 ± 0.1114</td>
+							<td>0.4623 ± 0.062</td>
+						</tr>
+						<tr>
+							<td rowspan="2">3</td>
+							<td>PNN</td>
+							<td>0.2374 ± 0.1872</td>
+							<td>0.2933 ± 0.0978</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.4283 ± 0.0558</td>
+							<td>0.423 ± 0.048</td>
+						</tr>
+						<tr>
+							<td rowspan="2">4</td>
+							<td>PNN</td>
+							<td>0.1743 ± 0.211</td>
+							<td>0.1572 ± 0.162</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3326 ± 0.0415</td>
+							<td>0.3364 ± 0.081</td>
+						</tr>
+						<tr>
+							<td rowspan="2">5</td>
+							<td>PNN</td>
+							<td>0.2725 ± 0.1439</td>
+							<td>0.6307 ± 0.0417</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3953 ± 0.037</td>
+							<td>0.6424 ± 0.0078</td>
+						</tr>
+						<tr>
+							<td rowspan="2">Average</td>
+							<td>PNN</td>
+							<td>0.2217 ± 0.0367</td>
+							<td>0.3412 ± 0.1877</td>
+						</tr>
+						<tr>
+							<td>Ensemble PNN</td>
+							<td>0.3413 ± 0.0957</td>
+							<td><strong>0.4582 ± 0.1129</strong></td>
+						</tr>
+					</tbody>
+				</table>
+				
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -515,8 +853,14 @@
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-				<h1>Discussion</h1>
-				Let's end with some discussion of the implications and limitations.
+				<h2>Discussion</h2>
+				
+				In the liver trauma injuries dataset, not only does a hard-voting ensembling approach improve average performance across data splits, 
+				but we also find that within each random data split, the ensemble model is much more stable than the individual models; both for the tabular 
+				models and particularly for the multimodal models within each seed in Table \ref{tab:liver-results-perseed}, the standard deviation of the 
+				ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. This is likely because the liver 
+				trauma injuries dataset is particularly small with 722 rows, so this dataset especially benefits from the ensembling of the PNNs. Therefore, 
+				depending on the nature and difficulty of the dataset, a hard-voting ensemble approach can be beneficial for both model performance and stability.
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -526,8 +870,17 @@
 				<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
-				<h1>Conclusion</h1>
-				Let's end with some discussion of the implications and limitations.
+				<h2>Conclusion</h2>
+				With its classification-like feedforward neural network architecture, our PNN models flexibly handle multimodal and unimodal data. 
+				Furthermore, they are widely applicable for four treatment scenarios and two outcome scenarios, and they have the potential of making 
+				a significant impact in a variety of settings, as shown in our extensive real-world experiments. To the best of our knowledge, our 
+				method is the first prescriptive model for multimodal data, and it also outperforms or performs comparably to other well-known 
+				prescriptive models on unimodal tabular data in all treatment scenarios, without requiring large computational resources. 
+
+				Our approach is not only shown to perform strongly quantitavely, but also to provide realistic and stable prescriptions. 
+				The discrepancy between the prescribed and real-life treatment distributions is comparable to the other prescriptive methods. 
+				The small standard deviation of each sample's assignments from the models indicates that the networks are stable and robust to 
+				different data splits.
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
