@@ -539,7 +539,42 @@
 					there is leakage by training the PNN on the training set and evaluating it via the estimated rewards on the test set! And, to ensure 
 					quality of estiamted counterfactuals, we need more data on both the test and training set. So a 50/50 split is necessary.
 				</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Feature Type </th>
+							<th>Number of Columns</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Prior Diagnoses and Procedures</td>
+							<td>48</td>
+						</tr>
+						<tr>
+							<td>Demographics (Age and Sex)</td>
+							<td>2</td>
+						</tr>
+						<tr>
+							<td>Vitals </td>
+							<td>4</td>
+						</tr>
+						<tr>
+							<td>Clinical Notes Embeddings</td>
+							<td>768</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
+			<div class="margin-right-block" style="transform: translate(0%, 200%);" >
+				Overview of Features
+			</div>
+		</div>		
 
+		<div class="content-margin-container" >	
+			<div class="margin-left-block">
+			</div>		
+		    <div class="main-content-block">
 				<h3>Network Architecture</h3>
 				<p>
 					For the PNN itself, we fine-tune the following hyperparameters:
@@ -588,6 +623,9 @@
 				on only the tabular features, and a multimodal model trained on the tabular and notes features. We present the results of the 125 individual models and 25 
 				ensemble models in Table \ref{tab:liver-results-perseed}.
 				</p>	
+				<figure>
+					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
+				</figure>
 				<table>
 					<!-- <caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
@@ -829,12 +867,15 @@
 				</table> -->
 				
 		    </div>
-		    <div class="margin-right-block">
-		    </div>
+			<div class="margin-right-block" style="transform: translate(0%, -400%);" >
+				Training and Validation Loss and Improvement
+			</div>
 		</div>
 
+
+
 		<div class="content-margin-container" id="discussion">
-				<div class="margin-left-block">
+			<div class="margin-left-block">
 				</div>
 		    <div class="main-content-block">
 				<h2>Discussion</h2>
