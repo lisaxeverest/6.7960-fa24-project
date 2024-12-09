@@ -263,8 +263,8 @@
             <!--You can embed an image like this:-->
             <img src="./images/liver-laceration-grades.png" width=512px/>
 		    </div>
-		    <div class="margin-right-block">
-					CT scans of the 5 grades of liver trauma <a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a>
+		    <div class="margin-right-block" >
+					<p style = "color:darkorange"> scans of the 5 grades of liver trauma</p><a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a>
 		    </div>
 		</div>
 
@@ -344,7 +344,7 @@
 				</p>
 		    </div>
 		    <div class="margin-right-block" style="transform: translate(0%, 70%);"> <!-- you can move the margin notes up and down with translate -->
-				<p>	
+				<p style = "color:darkorange">	
 					<b>So what's our contribution?</b> We attempt to contribute to the intersection of prescription and deep learning by relaxing 
 					the restriction to ReLU or binary activation functions and 
 					allowing any type of nonlinear activation functions in the neural network. 
@@ -360,7 +360,7 @@
 				Let's first learn about how our PNN model pipeline works. We divide the training process into four main steps: 
 				embedding extraction, counterfactual estimation, and 
 				prescription policy learning (neural network training). <br><br>
-				<h3>Embedding extraction</h3>
+				<h3>Embedding extraction </h3>
 				Because our liver dataset is multimodal, the first step in the model pipeline is to extract embeddings each from the structured and unstructured data. <br>
 				<h4>Structured data</h4> 
 				We extract embeddings from structured feature data through traditional preprocessing techniques as 
@@ -445,11 +445,13 @@
 					As observational inputs \( \boldsymbol{x}_i \) pass through this network of interconnected neurons, this calculation is 
 					performed in a nested manner, and the output of the final layer is computed, from which a prespecified loss function is 
 					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
-					structure is presented in Figure 1.
+					structure is presented in <a href="#figure1">Figure 1</a>.
 				</p>
+				<h4 id="figure1" style="color: #0e7862">
+					Figure 1: Architecture of a feedforward neural network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).
+				</h4>
 				<figure>
 					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
-					<figcaption>Architecture of a feedforward neural network (adapted from [fnn-image]).</figcaption>
 				</figure>
 				<p>
 					Since we want to minimize mortality risk in our liver dataset, our objective for the 
@@ -530,6 +532,8 @@
 		    <div class="main-content-block">
 				<h2>Experiments and Results</h2>
 				Now that we know what a PNN is and how to train one, we will present the experiment setup and results for our application on the liver trauma injury dataset.
+				<a href="#table1">Table 1</a> summarizes the key statistics about the features present in the cohort.
+ 
 				<h3>Data Split</h3>
 				<p>
 					For our experiments, we use the following data split: 50% for training and 50% for the test set. The typical ratios of 
@@ -540,6 +544,9 @@
 					quality of estiamted counterfactuals, we need more data on both the test and training set. So a 50/50 split is necessary.
 				</p>
 				<table>
+					<caption id="table1" style="color: #0e7862">
+						Table 1: Overview of Features
+					</caption>
 					<thead>
 						<tr>
 							<th>Feature Type </th>
@@ -564,12 +571,47 @@
 							<td>768</td>
 						</tr>
 					</tbody>
+
+					<thead>
+						<tr>
+							<th>Feature </th>
+							<th>Mean</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Age</td>
+							<td>43.53</td>
+						</tr>
+						<tr>
+							<td>Male</td>
+							<td>0.64</td>
+						</tr>
+						<tr>
+							<td>Oxygen Level </td>
+							<td>88.46</td>
+						</tr>
+						<tr>
+							<td>Temperature</td>
+							<td>85.49</td>
+						</tr>
+						<tr>
+						<td>Heart Rate</td>
+							<td>81.56</td>
+						</tr>
+						<tr>
+						<td>Respiratory Rate</td>
+							<td>16.59</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>	
-			<div class="margin-right-block" style="transform: translate(0%, 200%);" >
-				Overview of Features
-			</div>
-		</div>		
+			<div class="margin-right-block">
+				<p style = "color:darkorange">We select all patients that have a liver injury or laceration in the trauma department. 
+					The final cohort contains 722 unique patient encounters.</p>
+			</div>	
+		</div>	
+
 
 		<div class="content-margin-container" >	
 			<div class="margin-left-block">
@@ -621,12 +663,15 @@
 				In total, we perform 5 randomized data splits per dataset; for each split, we train 5 iterations of 5 models each. For each iteration,
 				we also ensemble the 5 respective models using a hard-voting framework. We also train two types of models: a tabular model trained 
 				on only the tabular features, and a multimodal model trained on the tabular and notes features. We present the results of the 125 individual models and 25 
-				ensemble models in Table \ref{tab:liver-results-perseed}.
+				ensemble models in <a href="#table2">Table 2</a>.
+
+				Furthermore, <a href="#figure2">Figure 2</a> plots the training and validation losses. Validation loss reaches its minimum around 800 epochs.
+				Validation improvement plateaus after 200 epochs with an approximately 0.5 improvement.
 				</p>	
-				<figure>
-					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
-				</figure>
 				<table>
+					<caption id="table2" style="color: #0e7862">
+						Table 2: Average Improvement in Mortality Risk of Liver Trauma Patients
+					</caption>
 					<!-- <caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
 						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
@@ -796,7 +841,9 @@
 						</tr>
 					</thead>
 					<tbody>
+						-->
 						<!-- Tabular & Notes Estimator -->
+						 <!-- 
 						<tr>
 							<td rowspan="2">1</td>
 							<td>PNN</td>
@@ -865,11 +912,15 @@
 						</tr>
 					</tbody>
 				</table> -->
+
+				<h4 id="figure2" style="color: #0e7862">
+					Figure 2: Training and Validation Losses and Improvement
+				</h4>
+				<figure>
+					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
+				</figure>
 				
 		    </div>
-			<div class="margin-right-block" style="transform: translate(0%, -400%);" >
-				Training and Validation Loss and Improvement
-			</div>
 		</div>
 
 
@@ -882,7 +933,7 @@
 				We find that both the PNN and ensembled PNN models are able to succesfully decrease (improve) mortality rate, with the 
 				ensemble models outperforming the individual PNN models! Furthermore, we also find that within each random data split, the 
 				ensemble model is much more stable than the individual models; both for the tabular 
-				models and particularly for the multimodal models within each seed in Table (), the standard deviation of the 
+				models and particularly for the multimodal models within each seed in <a href="#table2">Table 2</a> , the standard deviation of the 
 				ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. 
 				
 				Furthermore, the multimodal (tabular and note) models outperform their tabular counterparts, demonstrating the benefit of 
@@ -897,16 +948,25 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Conclusion</h2>
-				With its classification-like feedforward neural network architecture, our PNN models flexibly handle multimodal and unimodal data. 
-				Furthermore, they are widely applicable for four treatment scenarios and two outcome scenarios, and they have the potential of making 
-				a significant impact in a variety of settings, as shown in our extensive real-world experiments. To the best of our knowledge, our 
-				method is the first prescriptive model for multimodal data, and it also outperforms or performs comparably to other well-known 
-				prescriptive models on unimodal tabular data in all treatment scenarios, without requiring large computational resources. 
+				Methodologically, with its classification-like feedforward neural network architecture, our PNN models flexibly handle multimodal and unimodal data 
+				as well as any nonlinear activation function. Furthermore, PNN holistically combines prediction and prescription in one step. 
+				<br><br>
 
-				Our approach is not only shown to perform strongly quantitavely, but also to provide realistic and stable prescriptions. 
+				Empirically, they demonstrate wide applicability in healthcare and have the potential of making 
+				a significant impact in a variety of settings. As shown in our liver trauma management experiments where correct and in-time prescription
+				is critical to patient outcomes, PNN and ensembled PNN using clinical notes and tabular features reduce mortality rate by as much as 0.46. 
+				<!-- they are widely applicable for four treatment scenarios and two outcome scenarios, and they have the potential of making 
+				a significant impact in a variety of settings, as shown in our extensive real-world experiments. --> 
+				To the best of our knowledge, our method is the first prescriptive model for multimodal data, and it also outperforms or performs comparably to other well-known 
+				prescriptive models on unimodal tabular data, without requiring large computational resources. 
+				<br><br>
+				Finally, our approach is not only shown to perform strongly quantitavely, but also to provide realistic and stable prescriptions. 
 				The discrepancy between the prescribed and real-life treatment distributions is comparable to the other prescriptive methods. 
 				The small standard deviation of each sample's assignments from the models indicates that the networks are stable and robust to 
 				different data splits.
+				<br><br>
+				As next steps, we are interested in comparing the performance of our method with other prescriptive methods that 
+				leverage neural networks. In addition, we would like to emprically test this method on other applications. 
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -972,6 +1032,11 @@
 								Dudík, Miroslav, John Langford, and Lihong Li. 
     							<cite>Doubly Robust Policy Evaluation and Learning.</cite> 
     							<i>arXiv preprint</i>, arXiv:1103.4601, 2011.
+							<br><br>
+							<a id = "ref_fnn"></a>[12]
+								Quiza, Ramon, and J. Paulo Davim. 
+								<cite>Computational Methods and Optimization.</cite> 
+								<i>Machining of Hard Materials</i>, Springer, 2011, pp. 177–208.
 							<br><br>
 						</div>
 		    </div>
