@@ -264,7 +264,7 @@
             <img src="./images/liver-laceration-grades.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block" >
-					<p style = "color:darkorange"><b>Figure 1:</b> Scans of the 5 grades of liver trauma <a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a></p>
+					<p style = "color:#0e7862"><b>Figure 1:</b> Scans of the 5 grades of liver trauma <a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a></p>
 		    </div>
 		</div>
 
@@ -366,7 +366,7 @@
 						<strong>Features.</strong> \( \boldsymbol{x}_i\in\mathbb{R}^p \) is the 
 						\( p \)-dimensional feature data for the <em>i</em>-th observation. For our liver dataset, this includes patient 
 						demographics, prior diagnoses, vitals, and clinical notes. We include some summary statistics of our features in 
-						Figure <a href="#fig_2">2</a>.
+						<a href="#figure2">Figure 2</a>.
 					</li>
 					<li>
 						<strong>Treatments.</strong> \( t_i ∈ \{0,1\} \) is the treatment applied historically to the <em>i</em>-th 
@@ -378,7 +378,9 @@
 					</li>
 				</ul>
 
-				<table id="#fig_2">
+				<table>
+					<caption id="figure2" style="color: #0e7862">
+					</caption>
 					<thead>
 						<tr>
 							<th>Feature Type </th>
@@ -499,9 +501,9 @@
 					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
 					structure is presented in <a href="#figure3">Figure 3</a>.
 				</p>
-				<!-- <h4 id="figure3" style="color: #0e7862">
-					<b>Figure 3: </b>Architecture of a Feedforward Neural Network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).
-				</h4> -->
+				<h4 id="figure3" style="color: #0e7862">
+					<!--<b>Figure 3: </b>Architecture of a Feedforward Neural Network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).-->
+				</h4> 
 				<figure>
 					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
 				</figure>
@@ -537,8 +539,10 @@
 				</p>
 			</body>
 		</div>
-		<div class="margin-right-block" style="transform: translate(0%, -1060%);">
-			<div style="transform: translate(0%, 4400%);" ><b>Figure 3:</b> Typical structure of a feedforward neural network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>])</div>
+
+		<div class="margin-right-block" style="transform: translate(0%, -300%); color: #0e7862">
+			<div style="transform: translate(0%, -3300%);" ><b>Figure 2:</b> Overview of Features</div>
+			<div style="transform: translate(0%, 1600%);" ><b>Figure 3:</b> Typical structure of a feedforward neural network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>])</div>
 		</div>
 	</div>
 
@@ -614,11 +618,10 @@
 				</p>
 				<h3>Performance evaluation</h3>
 				<p>
-				<a href="#figure6">Figure 6</a> plots the training and validation losses for one of a sample PNN.We can see how the early stopping is helpful in 
+				<a href="#figure4">Figure 4</a> plots the training and validation losses for one of a sample PNN.We can see how the early stopping is helpful in 
 				terminating the training process when validation loss is no longer improving significantly, helping to prevent overfitting! 
 				</p>	
-				<h4 id="figure2" style="color: #0e7862">
-					Figure 7: Training and Validation Losses and Improvement
+				<h4 id="figure4" style="color: #0e7862">
 				</h4>
 				<figure>
 					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
@@ -641,8 +644,8 @@
 				<p>
 					We present the 
 					results of the 125 individual models and 25 
-					ensemble models in <a href="#table2">Figure 6</a>. In this table, the numbers are the improvement for all models for each seed, 
-					as well as the average across seeds, in Figure 6. The improvement 
+					ensemble models in <a href="#figure5">Figure 5</a>. In this table, the numbers are the improvement for all models for each seed, 
+					as well as the average across seeds, in <a href="#figure5">Figure 5</a>. The improvement 
 					is the total estimated counterfactual rewards of the PNN prescriptions relative to the total estimated rewards 
 					of the prescriptions in reality. Because of how the tabular and multimodal models are trained (one on tabular counterfactuals and one 
 					on multimodal counterfactuals), it is only fair that we compare model improvement in both types of estimators: the 
@@ -651,8 +654,7 @@
 				</p>
 				
 				<table>
-					<caption id="table2" style="color: #0e7862">
-						Figure 6: Average Improvement in Mortality Risk of Liver Trauma Patients
+					<caption id="figure5" style="color: #0e7862">
 					</caption>
 					<!-- <caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
@@ -809,6 +811,10 @@
 				</table>
 				
 		    </div>
+			<div class="margin-right-block" style="transform: translate(0%, -300%); color: #0e7862">
+				<div style="transform: translate(0%, -300%);" ><b>Figure 4:</b> Training and Validation Losses </div>
+				<div style="transform: translate(0%, 2300%);" ><b>Figure 5:</b> Average Improvement in Mortality Risk of Liver Trauma Patients </div>
+			</div>
 		</div>
 
 		<!-- <div class="content-margin-container" >	
