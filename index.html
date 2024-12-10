@@ -289,9 +289,9 @@
 					very important in medicine; patients with different characteristics 
 					might be handled differently in reality. Previous literature has demonstrated benefits of such personalized interventions in various
 					medical settings. 
-					<a href="#ref_1"> Bayati et al. (2014) </a> uses readmission predictions of heart failure patients to 
+					<a href="#ref_readmission"> Bayati et al. (2014) </a> uses readmission predictions of heart failure patients to 
 					guide individual treatment decisions post-discharge and show a reduction in both readmission rate and associated cost.
-					<a href="#ref_2"> Bertsimas et al. (2017) </a> leverage k-nearest neighbors to predict outcomes of type-2 diabetes patients
+					<a href="#ref_diabetes"> Bertsimas et al. (2017) </a> leverage k-nearest neighbors to predict outcomes of type-2 diabetes patients
 					under different combination of drugs and show that personalized management to diabete patients 
 					yield major improvement in outcomes compared to the standard of care that does not differentiate.
 				</p>
@@ -324,11 +324,11 @@
 				</p>
 				<p>
 					In the past decade, tree-based machine learning methods and causal methods have sought to improve upon Regress and Compare. 
-					For example, <a href="#ref_1"> Kallus (2017) </a> extends Regress and Compare and proposes a single-task method that recursively 
-					partitions the input space with the smallest sum of impurities for prescription purposes. <a href="#ref_2"> Bertsimas et al. (2019) </a> 
-					extends the Optimal Classification Trees in <a href="#ref_3"> Bertsimas and Dunn (2017) </a> - an interpretable tree-based method - to prescription. 
+					For example, <a href="#ref_4"> Kallus (2017) </a> extends Regress and Compare and proposes a single-task method that recursively 
+					partitions the input space with the smallest sum of impurities for prescription purposes. <a href="#ref_5"> Bertsimas et al. (2019) </a> 
+					extends the Optimal Classification Trees in <a href="#ref_6"> Bertsimas and Dunn (2017) </a> - an interpretable tree-based method - to prescription. 
 					They introduce Optimal Prescriptive Trees which estimates the counterfactual outcome of each observation under each treatment during training 
-					to minimize both the prediction and the prescription error. Finally, <a href="#ref_4"> Amram et al. (2022) </a> further develops Optimal Policy Tree,
+					to minimize both the prediction and the prescription error. Finally, <a href="#ref_7"> Amram et al. (2022) </a> further develops Optimal Policy Tree,
 					where counterfactuals are estimated separately prior to the tree training. 
 					A decision tree is then trained to obtain the optimal policy.
 				</p>
@@ -438,7 +438,7 @@
 				<p>
 					We extract embeddings from unstructured data using the pretrained model ClinicalLongformer, 
 					a long sequence transformer model trained via a sparse attention mechanism on domain-specific, large-scale clinical corpora 
-					<a href="#ref_7">[7]</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. 
+					<a href="#clinical_longformer">(Li et al., 2022)</a>; from this model, we obtain a 768-dimensional embedding vector for each observation's clinical note data. 
 					However, this is a very high-dimensional input for training a neural network using only 722 datapoints (size of our liver dataset!). 
 					In order to 
 					improve stability, tractability, and performance, we  
@@ -833,7 +833,7 @@
 					We find that both the PNN and ensembled PNN models are able to succesfully decrease (improve) mortality rate, with the 
 					ensemble models outperforming the individual PNN models! Furthermore, we also find that within each random data split, the 
 					ensemble model is much more stable than the individual models; both for the tabular 
-					models and particularly for the multimodal models within each seed in <a href="#table2">Table 2</a> , the standard deviation of the 
+					models and particularly for the multimodal models within each seed in <a href="#figure5">Figure 5</a> , the standard deviation of the 
 					ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. 
 				</p>
 
@@ -929,7 +929,12 @@
     							<cite>Doubly Robust Policy Evaluation and Learning.</cite> 
     							<i>arXiv preprint</i>, arXiv:1103.4601, 2011.
 							<br><br>
-							<a id = "ref_fnn"></a>[12]
+							<a id = "clinical_longformer"></a>[12]
+								Li, Yikuan, Ramsey M. Wehbe, Faraz S. Ahmad, Hanyin Wang, and Yuan Luo. 
+    							<cite>Clinical-Longformer and Clinical-BigBird: Transformers for Long Clinical Sequences.</cite> 
+    							<i>arXiv preprint</i>, arXiv:2201.11838, 2022.
+							<br><br>
+							<a id = "ref_fnn"></a>[13]
 								Quiza, Ramon, and J. Paulo Davim. 
 								<cite>Computational Methods and Optimization.</cite> 
 								<i>Machining of Hard Materials</i>, Springer, 2011, pp. 177–208.
