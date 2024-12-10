@@ -264,7 +264,7 @@
             <img src="./images/liver-laceration-grades.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block" >
-					<p style = "color:darkorange"><b>Figure 1:</b> Scans of the 5 grades of liver trauma</p><a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a>
+					<p style = "color:darkorange"><b>Figure 1:</b> Scans of the 5 grades of liver trauma <a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a></p>
 		    </div>
 		</div>
 
@@ -365,7 +365,8 @@
 					<li>
 						<strong>Features.</strong> \( \boldsymbol{x}_i\in\mathbb{R}^p \) is the 
 						\( p \)-dimensional feature data for the <em>i</em>-th observation. For our liver dataset, this includes patient 
-						demographics, prior diagnoses, vitals, and clinical notes. 
+						demographics, prior diagnoses, vitals, and clinical notes. We include some summary statistics of our features in 
+						Figure <a href="#fig_2">2</a>.
 					</li>
 					<li>
 						<strong>Treatments.</strong> \( t_i ∈ \{0,1\} \) is the treatment applied historically to the <em>i</em>-th 
@@ -377,7 +378,7 @@
 					</li>
 				</ul>
 
-				<table>
+				<table id="#fig_2">
 					<thead>
 						<tr>
 							<th>Feature Type </th>
@@ -449,11 +450,15 @@
 					we perform a counterfactual estimation step. This is something
 					from the causal inference literature, and is a typical way of dealing with unknown outcomes! 
 					Our approach is inspired by <a href="#ref-doubly-robust-policy">Dudik et al. (2014)</a>, 
-					which estimates the outcomes for each observation under every treatment.
+					which estimates the outcomes for each observation under every treatment. Note that we can use purely tabular data or multimodal data to 
+					estimate rewards!
 				</p>
 
-				We aim to produce \( \Gamma \), a rewards matrix where each \( \Gamma_{i,t} \) is the estimated outcome of 
-				applying treatment \( t \) to the \( i^{\text{th}} \) observation. We now review the three main methods for counterfactual estimation:
+				<p>
+					The goal of counterfactual estimation is to produce \( \Gamma \), a rewards matrix where each \( \Gamma_{i,t} \) is the estimated outcome of 
+					applying treatment \( t \) to the \( i^{\text{th}} \) observation. We now review the 
+					three main methods for counterfactual estimation:
+				</p>
 				<ol>
 					<li>
 						<b>Direct method.</b> T This is a method directly learns the outcome function \( y_{t}(\boldsymbol{x}) \)
@@ -494,9 +499,9 @@
 					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
 					structure is presented in <a href="#figure3">Figure 3</a>.
 				</p>
-				<h4 id="figure3" style="color: #0e7862">
+				<!-- <h4 id="figure3" style="color: #0e7862">
 					<b>Figure 3: </b>Architecture of a Feedforward Neural Network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).
-				</h4>
+				</h4> -->
 				<figure>
 					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
 				</figure>
@@ -533,8 +538,7 @@
 			</body>
 		</div>
 		<div class="margin-right-block" style="transform: translate(0%, -1060%);">
-			<div><b>Figure 2:</b> Overview of the features in our liver dataset.</div>
-			<div style="transform: translate(0%, 4400%);" ><b>Figure 3:</b> Typical structure of a feedforward neural network.</div>
+			<div style="transform: translate(0%, 4400%);" ><b>Figure 3:</b> Typical structure of a feedforward neural network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>])</div>
 		</div>
 	</div>
 
@@ -559,7 +563,7 @@
 		    <div class="main-content-block">
 				<h2>Experiments and Results</h2>
 				Now that we know what a PNN is and how to train one, we will present the experiment setup and results for our application on the liver trauma injury dataset.
-				<a href="#table1">Table 1</a> summarizes the key statistics about the features present in the cohort.
+				<!-- <a href="#table1">Table 1</a> summarizes the key statistics about the features present in the cohort. -->
  
 				<h3>Data Split</h3>
 				<p>
@@ -610,18 +614,42 @@
 				</p>
 				<h3>Performance evaluation</h3>
 				<p>
-				To evaluate the models' performance on each dataset, we perform multiple train-validation-test splits and report 
-				the average performance of each split's models. This ensures that the results are not tailored to a specific data 
-				split, and also enables the investigation of stability of the prescriptive methods. Also, given the randomness often 
-				associated with training machine learning models, we train multiple models per split and also average their performance. 
-				In total, we perform 5 randomized data splits per dataset; for each split, we train 5 iterations of 5 models each. For each iteration,
-				we also ensemble the 5 respective models using a hard-voting framework. We also train two types of models: a tabular model trained 
-				on only the tabular features, and a multimodal model trained on the tabular and notes features. We present the results of the 125 individual models and 25 
-				ensemble models in <a href="#table2">Figure 6</a>.
-
-				Furthermore, <a href="#figure6">Figure 6</a> plots the training and validation losses. Validation loss reaches its minimum around 800 epochs.
-				Validation improvement plateaus after 200 epochs with an approximately 0.5 improvement.
+				<a href="#figure6">Figure 6</a> plots the training and validation losses for one of a sample PNN.We can see how the early stopping is helpful in 
+				terminating the training process when validation loss is no longer improving significantly, helping to prevent overfitting! 
 				</p>	
+				<h4 id="figure2" style="color: #0e7862">
+					Figure 7: Training and Validation Losses and Improvement
+				</h4>
+				<figure>
+					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
+				</figure>
+				<p>
+					To evaluate the PNN performance on the liver dataset, we perform multiple train-validation-test splits and report 
+					the average performance of each split's models. This ensures that the results are not tailored to a specific data 
+					split. Also, given the randomness often 
+					associated with training machine learning models, we train multiple models per split and also average their performance. 
+					In total, we perform 5 randomized data splits per dataset; for each split, we train 5 iterations of 5 models each for a total of 125 
+					individual models per seed. For each iteration,
+					we also ensemble the 5 respective models using a hard-voting framework, for a total of 25 ensembles per seed. 
+				</p>
+				<p>
+					Furthermore, since the feature embeddings are easily modularized, we train two types of models: a tabular model trained 
+					on only the tabular features, and a multimodal model trained on concatenated tabular and notes features. Since the tabular model is trained 
+					using only the tabular features, it is natural that the counterfactual rewards it uses to train is also only estimated on the tabular features.
+					A similar approach is used for the multimodal model as well.  
+				</p>
+				<p>
+					We present the 
+					results of the 125 individual models and 25 
+					ensemble models in <a href="#table2">Figure 6</a>. In this table, the numbers are the improvement for all models for each seed, 
+					as well as the average across seeds, in Figure 6. The improvement 
+					is the total estimated counterfactual rewards of the PNN prescriptions relative to the total estimated rewards 
+					of the prescriptions in reality. Because of how the tabular and multimodal models are trained (one on tabular counterfactuals and one 
+					on multimodal counterfactuals), it is only fair that we compare model improvement in both types of estimators: the 
+					"Tabular" estimator and the "Tabular & Notes" (multimodal) 
+					estimator. 
+				</p>
+				
 				<table>
 					<caption id="table2" style="color: #0e7862">
 						Figure 6: Average Improvement in Mortality Risk of Liver Trauma Patients
@@ -779,12 +807,15 @@
 						</tr>
 					</tbody>
 				</table>
+<<<<<<< HEAD
 				<h4 id="figure2" style="color: #0e7862">
 					Figure 2: Training and Validation Losses
 				</h4>
 				<figure>
 					<img src="images/training_curve.png" alt="training curve" style="width:60%;">
 				</figure>
+=======
+>>>>>>> eac1e24 (lisa changes)
 				
 		    </div>
 		</div>
@@ -801,14 +832,25 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Discussion</h2>
+<<<<<<< HEAD
 				We find that both the PNN and ensembled PNN models are able to successfully decrease (improve) mortality rate, with the 
 				ensemble models outperforming the individual PNN models! Furthermore, we also find that within each random data split, the 
 				ensemble model is much more stable than the individual models; both for the tabular 
 				models and particularly for the multimodal models within each seed in <a href="#table2">Table 2</a> , the standard deviation of the 
 				ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. 
+=======
+				<p>We find that both the PNN and ensembled PNN models are able to succesfully decrease (improve) mortality rate, with the 
+					ensemble models outperforming the individual PNN models! Furthermore, we also find that within each random data split, the 
+					ensemble model is much more stable than the individual models; both for the tabular 
+					models and particularly for the multimodal models within each seed in <a href="#table2">Table 2</a> , the standard deviation of the 
+					ensemble PNN is at most half that of the individual PNN -- sometimes almost an order of magnitude smaller. 
+				</p>
+>>>>>>> eac1e24 (lisa changes)
 				
-				Furthermore, the multimodal (tabular and note) models outperform their tabular counterparts, demonstrating the benefit of 
-				increased information from the added language modality.
+				<p>
+					Finally, the multimodal (tabular and note) models outperform their tabular counterparts, demonstrating the benefit of 
+					increased information from the added language modality.
+				</p>
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
@@ -819,25 +861,18 @@
 				</div>
 		    <div class="main-content-block">
 				<h2>Conclusion</h2>
-				Methodologically, with its classification-like feedforward neural network architecture, our PNN models flexibly handle multimodal and unimodal data 
-				as well as any nonlinear activation function. Furthermore, PNN holistically combines prediction and prescription in one step. 
-				<br><br>
-
-				Empirically, they demonstrate wide applicability in healthcare and have the potential of making 
-				a significant impact in a variety of settings. As shown in our liver trauma management experiments where correct and in-time prescription
-				is critical to patient outcomes, PNN and ensembled PNN using clinical notes and tabular features reduce mortality rate by as much as 0.46. 
-				<!-- they are widely applicable for four treatment scenarios and two outcome scenarios, and they have the potential of making 
-				a significant impact in a variety of settings, as shown in our extensive real-world experiments. --> 
-				To the best of our knowledge, our method is the first prescriptive model for multimodal data, and it also outperforms or performs comparably to other well-known 
-				prescriptive models on unimodal tabular data, without requiring large computational resources. 
-				<br><br>
-				Finally, our approach is not only shown to perform strongly quantitavely, but also to provide realistic and stable prescriptions. 
-				The discrepancy between the prescribed and real-life treatment distributions is comparable to the other prescriptive methods. 
-				The small standard deviation of each sample's assignments from the models indicates that the networks are stable and robust to 
-				different data splits.
-				<br><br>
-				As next steps, we are interested in comparing the performance of our method with other prescriptive methods that 
-				leverage neural networks. In addition, we would like to emprically test this method on other applications. 
+				<p>
+					Methodologically, with its classification-like feedforward neural network architecture, our PNN models flexibly handle multimodal and unimodal data 
+					as well as any nonlinear activation function. Furthermore, PNN holistically combines prediction and prescription in one step. Empirically, they 
+					demonstrate wide applicability in healthcare and have the potential of making 
+					a significant impact in a variety of settings. As shown in our liver trauma management experiments where correct and in-time prescription
+					is critical to patient outcomes, PNN and ensembled PNN using clinical notes and tabular features reduce mortality rate by as much as 0.46. 
+					We even showed some potential in ensembling the PNNs to produce both higher performance as well as increased stability. 
+				</p>
+				<p>
+					As next steps, we are interested in comparing the performance of our method with other prescriptive methods that 
+					leverage neural networks. In addition, we would like to empirically test this method on other applications. 
+				</p>
 		    </div>
 		    <div class="margin-right-block">
 		    </div>
