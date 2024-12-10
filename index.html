@@ -264,7 +264,7 @@
             <img src="./images/liver-laceration-grades.png" width=512px/>
 		    </div>
 		    <div class="margin-right-block" >
-					<p> Scans of the 5 grades of liver trauma</p><a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a>
+					<p style = "color:darkorange"><b>Figure 1:</b> Scans of the 5 grades of liver trauma</p><a href="https://www.researchgate.net/publication/361478611/figure/fig1/AS:1169964820119558@1655952758942/Different-types-of-liver-trauma-a1cm-depth-laceration-or-10-surface-area-haematoma.jpg">(credit)</a>
 		    </div>
 		</div>
 
@@ -356,8 +356,55 @@
 			</div>
 		<div class="main-content-block">
 				<h2>Methodology</h2>
-				<h2>Note to self (this is lisa): add notation definitions here</h2>
-				Let's first learn about how our PNN model pipeline works. We divide the training process into four main steps: 
+				<p>
+					Let's first learn about how our PNN model pipeline works. We define some notation that describes the data that characterizes 
+					a prescription problem. The data is observational, in the form \( \{(\boldsymbol{x}_i, y_i, t_i)\}_{i=1}^n \), and 
+					consists of the following components:
+				</p>
+				<ul>
+					<li>
+						<strong>Features.</strong> \( \boldsymbol{x}_i\in\mathbb{R}^p \) is the 
+						\( p \)-dimensional feature data for the <em>i</em>-th observation. For our liver dataset, this includes patient 
+						demographics, prior diagnoses, vitals, and clinical notes. 
+					</li>
+					<li>
+						<strong>Treatments.</strong> \( t_i ∈ \{0,1\} \) is the treatment applied historically to the <em>i</em>-th 
+						observation, where 0 indicates no treatment and 1 indicates surgical intervention (treatment). 
+					</li>
+					<li>
+						<strong>Outcomes.</strong> \( y_i ∈ \{0,1\} \) is the result observed after treatment \( t_i \) has been
+						 applied to the <em>i</em>-th observation, where 0 indicates patient survival and 1 indicates patient expiration.
+					</li>
+				</ul>
+
+				<table>
+					<thead>
+						<tr>
+							<th>Feature Type </th>
+							<th>Number of Columns</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Prior Diagnoses and Procedures</td>
+							<td>48</td>
+						</tr>
+						<tr>
+							<td>Demographics (Age and Sex)</td>
+							<td>2</td>
+						</tr>
+						<tr>
+							<td>Vitals </td>
+							<td>4</td>
+						</tr>
+						<tr>
+							<td>Clinical Notes Embeddings</td>
+							<td>768</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				We divide the training process into four main steps: 
 				embedding extraction, counterfactual estimation, and 
 				prescription policy learning (neural network training). <br><br>
 				<h3>Embedding extraction </h3>
@@ -445,10 +492,10 @@
 					As observational inputs \( \boldsymbol{x}_i \) pass through this network of interconnected neurons, this calculation is 
 					performed in a nested manner, and the output of the final layer is computed, from which a prespecified loss function is 
 					evaluated. Using backpropagation, the weights of the network are updated to minimize this loss function. The typical 
-					structure is presented in <a href="#figure1">Figure 1</a>.
+					structure is presented in <a href="#figure3">Figure 3</a>.
 				</p>
-				<h4 id="figure1" style="color: #0e7862">
-					Figure 1: Architecture of a Feedforward Neural Network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).
+				<h4 id="figure3" style="color: #0e7862">
+					<b>Figure 3: </b>Architecture of a Feedforward Neural Network (adapted from <a href="#ref_fnn">Quiza and Davim (2014)</a>]).
 				</h4>
 				<figure>
 					<img src="images/nn.png" alt="Feedforward Neural Network" style="width:60%;">
@@ -484,30 +531,10 @@
 					\( \min_{\tau(.)} \sum_{i=1}^{N} \sum_{t=1}^{T} \mathbb{P}[\tau(\boldsymbol{x}_i) = t] \cdot \Gamma_{i,t}. \)
 				</p>
 			</body>
-		
-	  <!-- 	  
-	  <center>
-		
-		<math xmlns="http://www.w3.org/1998/Math/MathML">
-		  <mrow>
-			<mrow>
-			  <mo>&#x2202;</mo>
-			  <mi>y</mi>
-			</mrow>
-			<mo>/</mo>
-			<mrow>
-			  <mo>&#x2202;</mo>
-			  <mi>x</mi>
-			</mrow>
-		  </mrow>
-		  <mo>=</mo>
-		  <mi>x</mi>
-		</math>
-	  </center> -->
-	  <br>
-	  
 		</div>
-		<div class="margin-right-block" style="transform: translate(0%, -100%);"> <!-- you can move the margin notes up and down with translate -->
+		<div class="margin-right-block" style="transform: translate(0%, -1060%);">
+			<div><b>Figure 2:</b> Overview of the features in our liver dataset.</div>
+			<div style="transform: translate(0%, 4400%);" ><b>Figure 3:</b> Typical structure of a feedforward neural network.</div>
 		</div>
 	</div>
 
@@ -543,80 +570,7 @@
 					there is leakage by training the PNN on the training set and evaluating it via the estimated rewards on the test set! And, to ensure 
 					quality of estiamted counterfactuals, we need more data on both the test and training set. So a 50/50 split is necessary.
 				</p>
-				<table>
-					<caption id="table1" style="color: #0e7862">
-						Table 1: Overview of Features
-					</caption>
-					<thead>
-						<tr>
-							<th>Feature Type </th>
-							<th>Number of Columns</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Prior Diagnoses and Procedures</td>
-							<td>48</td>
-						</tr>
-						<tr>
-							<td>Demographics (Age and Sex)</td>
-							<td>2</td>
-						</tr>
-						<tr>
-							<td>Vitals </td>
-							<td>4</td>
-						</tr>
-						<tr>
-							<td>Clinical Notes Embeddings</td>
-							<td>768</td>
-						</tr>
-					</tbody>
 
-					<thead>
-						<tr>
-							<th>Feature </th>
-							<th>Mean</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Age</td>
-							<td>43.53</td>
-						</tr>
-						<tr>
-							<td>Male</td>
-							<td>0.64</td>
-						</tr>
-						<tr>
-							<td>Oxygen Level </td>
-							<td>88.46</td>
-						</tr>
-						<tr>
-							<td>Temperature</td>
-							<td>85.49</td>
-						</tr>
-						<tr>
-						<td>Heart Rate</td>
-							<td>81.56</td>
-						</tr>
-						<tr>
-						<td>Respiratory Rate</td>
-							<td>16.59</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>	
-			<div class="margin-right-block">
-				<p >We select all patients that have a liver injury or laceration in the trauma department. 
-					The final cohort contains 722 unique patient encounters.</p>
-			</div>	
-		</div>	
-
-
-		<div class="content-margin-container" >	
-			<div class="margin-left-block">
-			</div>		
-		    <div class="main-content-block">
 				<h3>Network Architecture</h3>
 				<p>
 					For the PNN itself, we fine-tune the following hyperparameters:
@@ -663,13 +617,14 @@
 				In total, we perform 5 randomized data splits per dataset; for each split, we train 5 iterations of 5 models each. For each iteration,
 				we also ensemble the 5 respective models using a hard-voting framework. We also train two types of models: a tabular model trained 
 				on only the tabular features, and a multimodal model trained on the tabular and notes features. We present the results of the 125 individual models and 25 
-				ensemble models in <a href="#table2">Table 2</a>.
+				ensemble models in <a href="#table2">Figure 6</a>.
 
-				Furthermore, <a href="#figure2">Figure 2</a> plots the training and validation losses. Validation loss reaches its minimum around 800 epochs.
+				Furthermore, <a href="#figure6">Figure 6</a> plots the training and validation losses. Validation loss reaches its minimum around 800 epochs.
+				Validation improvement plateaus after 200 epochs with an approximately 0.5 improvement.
 				</p>	
 				<table>
 					<caption id="table2" style="color: #0e7862">
-						Table 2: Average Improvement in Mortality Risk of Liver Trauma Patients
+						Figure 6: Average Improvement in Mortality Risk of Liver Trauma Patients
 					</caption>
 					<!-- <caption>
 						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
@@ -824,94 +779,6 @@
 						</tr>
 					</tbody>
 				</table>
-
-				<!-- <table>
-					<caption>
-						Improvement in mortality risk for the experiment on liver trauma injuries, where lower mortality is better.
-						Within each split, we report the average improvement and standard deviation across five iterations. For the average 
-						split results, we report the average improvement and standard deviation across the five splits.
-					</caption>
-					<thead>
-						<tr>
-							<th>Split</th>
-							<th>Method</th>
-							<th>Tabular model</th>
-							<th>Multimodal model</th>
-						</tr>
-					</thead>
-					<tbody>
-						-->
-						<!-- Tabular & Notes Estimator -->
-						 <!-- 
-						<tr>
-							<td rowspan="2">1</td>
-							<td>PNN</td>
-							<td>0.2202 ± 0.2257</td>
-							<td>0.2141 ± 0.1721</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.3682 ± 0.0721</td>
-							<td>0.4268 ± 0.0314</td>
-						</tr>
-						<tr>
-							<td rowspan="2">2</td>
-							<td>PNN</td>
-							<td>0.2041 ± 0.1229</td>
-							<td>0.4107 ± 0.0664</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.1822 ± 0.1114</td>
-							<td>0.4623 ± 0.062</td>
-						</tr>
-						<tr>
-							<td rowspan="2">3</td>
-							<td>PNN</td>
-							<td>0.2374 ± 0.1872</td>
-							<td>0.2933 ± 0.0978</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.4283 ± 0.0558</td>
-							<td>0.423 ± 0.048</td>
-						</tr>
-						<tr>
-							<td rowspan="2">4</td>
-							<td>PNN</td>
-							<td>0.1743 ± 0.211</td>
-							<td>0.1572 ± 0.162</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.3326 ± 0.0415</td>
-							<td>0.3364 ± 0.081</td>
-						</tr>
-						<tr>
-							<td rowspan="2">5</td>
-							<td>PNN</td>
-							<td>0.2725 ± 0.1439</td>
-							<td>0.6307 ± 0.0417</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.3953 ± 0.037</td>
-							<td>0.6424 ± 0.0078</td>
-						</tr>
-						<tr>
-							<td rowspan="2">Average</td>
-							<td>PNN</td>
-							<td>0.2217 ± 0.0367</td>
-							<td>0.3412 ± 0.1877</td>
-						</tr>
-						<tr>
-							<td>Ensemble PNN</td>
-							<td>0.3413 ± 0.0957</td>
-							<td><strong>0.4582 ± 0.1129</strong></td>
-						</tr>
-					</tbody>
-				</table> -->
-
 				<h4 id="figure2" style="color: #0e7862">
 					Figure 2: Training and Validation Losses
 				</h4>
@@ -922,6 +789,11 @@
 		    </div>
 		</div>
 
+		<!-- <div class="content-margin-container" >	
+			<div class="margin-left-block">
+			</div>		
+		    <div class="main-content-block">
+		</div> -->
 
 
 		<div class="content-margin-container" id="discussion">
